@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+<style>
+	body {
+		overflow: hidden;
+		background-color: #555962;
+	}
+
+	#titlebar {
+		top:0px;
+		position:fixed;
+		z-index: 1;
+		width:100vw;
+		height:50px;
+		left:0px;
+		right:0px;
+		background-color: #2f3136;
+		box-shadow: 0 2px 0px #24262c;
+	}
+	#title {
+		position:relative;
+		top:1px;
+		left: 50px;
+		font-size: 35px;
+		color: white;
+		font-family: 'Montserrat', sans-serif;
+	}
+
+	.center {
+		position:relative;
+		top:60px;
+		margin-left: 235px;
+		margin-right: 235px;
+  		overflow-y: scroll;
+  		height: calc(100vh - 60px);
+	}
+
+	.sidebar {
+		position:fixed;
+		top: 0px;
+		bottom:0px;
+		width:235px;
+		background-color: #2f3136;
+	}
+
+	.button {
+		position:relative;
+		width: 215px;
+		height: 45px;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+	.button_margins {
+		margin-top: : 5px;
+		margin-bottom: 5px;
+	}
+
+	.button_text {
+		position: relative;
+		top: 11px;
+		width:150px;
+		font-family: 'Lato', sans-serif;
+		color:grey;
+	}
+	.button_enclosure {
+		width: 185px;
+		height: 60px;
+		bottom: 15px;
+		position:fixed;
+		border-top: 3px solid  #24262c;
+		background-color: #2f3136;
+		transition: all 0.3s;
+	}
+	.button_bottomEnclosure {
+		width: 185px;
+		height: 33px;
+		top: 65px;
+		position:fixed;
+		border-bottom: 3px solid  #24262c;
+		background-color: #2f3136;
+	}
+
+	.button:hover {
+		background-color: #36393f;
+	}
+	.button:hover > .button_text {
+		color:white;
+	}
+
+	.selected {
+		background-color: #36393f;
+	}
+
+	.selected > .button_text {
+		color:white;
+	}
+
+	.scrolling_sidecontent {
+		z-index:2;
+		position: fixed;
+		bottom:80px;
+		width:235px;
+		transition: all 0.3s;
+		background-color: #2f3136;
+		overflow-x:hidden;
+	}
+
+	.create_headings {
+		position: relative;
+		margin-bottom:10px;
+		color:grey;
+		font-family: 'Lato', sans-serif;
+		left:17px;
+	}
+
+	.unselectable {
+		pointer-events: none;
+	}
+
+	.create_textforms {
+		position:relative;
+		width:205px;
+		left:12px;
+		height:33px;
+		font-family: 'Lato', sans-serif;
+		font-size: 15px;
+		border-radius: 5px;
+		color:white;
+		background-color: #40444b;
+		border:0px solid;
+		padding-left:5px;
+	}
+
+	.create_submit {
+		position:relative;
+		margin-top:20px;
+		left:25px;
+		width:185px;
+		height:35px;
+		color: grey;
+		background-color:#2f3136;
+		border:0px solid;
+		border-radius: 20px;
+		font-family: 'Lato', sans-serif;
+		font-size: 15px;
+	}
+
+	.create_submit:hover {
+		background-color: #36393f;
+		color:white;
+	}
+
+
+	.hidden {
+		top:100%;
+	}
+	.unhidden {
+		top:60px;
+	}
+
+
+	.hidden_left {
+		right:-300px;
+	}
+
+	.unhidden_left {
+		right:0px;
+	}
+
+	.hidden_stream {
+		bottom:-60px;
+	}
+
+
+	.unhidden_stream {
+		bottom:15px;
+	}
+
+	.centre_enclosure {
+		margin-left:20px;
+		margin-right:20px;
+		position: relative;
+		color: white;
+		border-bottom: 1px solid grey;
+	}
+
+	.centre_content {
+		position:relative;
+		overflow-wrap: break-word;
+		font-family: 'Lato', sans-serif;
+		color: white;
+		margin-bottom: 10px;
+	}
+
+	.centre_title {
+		overflow-wrap: break-word;
+		max-width:550px;
+		font-family: 'Source Sans Pro', sans-serif;
+		font-size: 30px;
+		color:white;
+	}
+	.centre_date {
+		overflow-wrap: break-word;
+		font-family: 'Lato', sans-serif;
+		top:12px;
+		color:white;
+		padding-bottom: 10px;
+		padding-left: 10px;
+		position:relative;
+		float:right;
+	}
+
+	.centre_audio_content {
+		margin-top:20px;
+		position:relative;
+		width:96%;
+		left:10px;
+		background-color: #f1f3f4;
+
+	}
+
+	audio {
+		display:block;
+		position:relative;
+		left:6%;
+		width:94%;
+		background-color: #f1f3f4;
+	} 
+
+	a {
+		font-family: 'Source Sans Pro', sans-serif;
+		color:#35a8d4;
+	}
+
+	.icon {
+		position:absolute;
+		height:54px;
+	}
+</style>
+
+
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+	<!--Top Bar title-->
+	<div id = "titlebar">
+		<div id = "title">RustyPipes</div> 
+	</div>
+
+	<!--Left hand bar-->
+	<div class = "sidebar" style="left:0px">
+		<!--List of feeds-->
+		<div class = "scrolling_sidecontent" id = "feed_list" style="left:0px; top:60px;" >
+		</div>
+		<!--Creating form, starts off hidden, but can be opened by toggling hidden-->
+		<div class = "scrolling_sidecontent hidden" id = "feed_create" style= "left:0px;">
+			<form>
+				<div class = "create_headings"> Name: </div>
+				<input type="input" class = "create_textforms" id = "create_feed_name" placeholder="Please enter a name" maxlength="25">
+  				<button type="button" class = "create_submit" id = "create_feed"> Create feed</button>
+			</form>
+		</div>
+		<!--Buttont hat unhides crating form-->
+		<div class = "button_enclosure" style = "left:25px"> 
+			<span id = "new_feed">
+				<div class = "button" style="top:15px;right:15px;">
+					<div class = "button_text" style= "left:70px;"> Add new feed </div>
+				</div>
+			</span>
+		</div>
+	</div>
+
+
+
+	<!--Centre hand bar-->
+	<div class="center" id = "center">
+
+
+
+
+
+
+	</div>
+
+
+
+
+
+
+
+	<!-- Right hand bar-->
+	<div class = "sidebar" style = "right:0px">
+		<div class = "scrolling_sidecontent" id = "stream_list" style="right:0px; top:60px;" >
+			<!-- Contains streams-->
+		</div>
+
+
+		<div class = "scrolling_sidecontent hidden" id = "stream_list_create" style="right:0px;" >
+			<div class = "button button_margins" id = "rsspodcast_node" style="left:10px">
+				<div class = "button_text" style="left:70px;">
+					RSS podcast
+				</div>
+			</div>
+		</div>
+		<div class = "scrolling_sidecontent hidden" id = "stream_list_form" style="right:0px;">
+			<form>
+				<div class = "create_headings"> Name: </div>
+				<input type="input" class = "create_textforms" id = "create_stream_name" placeholder="Please enter a name" maxlength="25">
+				<div class = "create_headings"> URL: </div>
+				<input type="input" class = "create_textforms" id = "create_stream_url" placeholder="Please enter a url">
+  				<button type="button" class = "create_submit" id = "create_stream"> Create stream</button>
+			</form>
+		</div>
+		<div class = "button_enclosure unselectable" style="right:25px;" id = "stream_create"> 
+			<span id = "new_stream">
+				<div class = "button"  style="top:15px;right:15px;">
+					<div class = "button_text" style= "left:70px;" id = "create_stream"> Add new stream </div>
+				</div>
+			</span>
+		</div>
+	</div>
+</body>
+    <script>
+    	
+    	var requester = {
+    		day: 10,
+    		month: 10,
+    		year: 10,
+			feed_request: function(name) {
+				  	var request = new XMLHttpRequest();
+				  	request.open("GET", "/createFeed?name=" + name);
+				  	request.onreadystatechange = function() {
+				  		if (request.readyState == 4) {
+				  		}
+				  	}
+				  	request.send();
+			},
+
+			stream_request: function(name, url) {
+				var request = new XMLHttpRequest();
+				request.open("GET", "/createStream?type="+stream_create_stepper.curr_feed
+					+"&url="+url+"&name="+name+"&feed_name="+feed_list.curr.dataset.name);
+				request.onreadystatechange = function() {
+					if (request.readyState == 4) {
+
+					}
+				}
+				request.send();
+			},
+
+			fetch_streams: function(name) {
+				var request = new XMLHttpRequest();
+				request.open("GET", "/getStreams?name=" + name);
+				request.onreadystatechange = function() {
+				  	if (request.readyState == 4) {
+				  		var requestText = JSON.parse(request.responseText);
+				  		var i = 0;
+				  		while(i < requestText.length) {
+				  			stream_create_completer.action1(requestText[i].name, stream_list.html_object);
+				  			i = i + 1;
+				  		}
+				  	}
+				}
+				request.send();
+			},
+			fetch: function(name) {
+				var request = new XMLHttpRequest();
+				request.open("GET", "/fetch?name=" + name+"&day="+this.day+"&month="+this.month+"&year="+this.year);
+
+				request.onreadystatechange = function() {
+					if (request.readyState == 4) {
+
+				  		var requestText = JSON.parse(request.responseText);
+				  		var i = 0;
+				  		while(i < requestText.length-1) {
+				  			centre.add(requestText[i].date, requestText[i].title, requestText[i].link,
+				  				requestText[i].icon,
+				  				requestText[i].description);
+				  			i = i + 1;
+				  		}
+
+				  		requester.year = requestText[i][0].year;
+				  		requester.month = requestText[i][0].month;
+				  		requester.day = requestText[i][0].day;
+
+
+
+				  	}
+				}					
+				request.send();
+			},
+			set: function() {
+				var currentTime = new Date();
+				this.day = currentTime.getDate();
+				this.month = currentTime.getMonth() + 1;
+				this.year = currentTime.getFullYear();
+			}
+    	};
+	
+    	var feed_create_initiater = {
+    		html_object: document.getElementById("new_feed"),
+    		curr_action: null,
+    		start: function(feed_create_form) {
+				setTimeout(function(){
+				   	feed_create_form.classList.toggle("unhidden");
+				}, 0);
+				curr_action = this.close;
+	    	},
+    		close: function(feed_create_form) {
+		  		setTimeout(function(){
+				   	feed_create_form.classList.toggle("unhidden");
+				}, 0);
+		  		curr_action = this.start;
+    		},
+    		action: function(feed_create_form) {
+    			this.curr_action(feed_create_form);
+    		},
+    		intitialize: function() {
+    			this.curr_action = this.start;
+    		}
+    	};
+
+    	var feed_create_completer = {
+    		html_object: document.getElementById("create_feed"),
+    		action: function(form_create_form, feed) {
+				var feed_obj = this.create_object(form_create_form.name.value);
+				feed.appendChild(feed_obj);
+				requester.feed_request(form_create_form.name.value);
+				form_create_form.name.value = "";		
+			},
+			create_object: function (name) {
+				var newDiv2 = document.createElement("div"); 
+				var newDiv = document.createElement("div"); 
+				var newContent = document.createTextNode(name); 
+				newDiv.className = "button_text";
+				newDiv.style.left = "70px";
+				newDiv.appendChild(newContent);  
+				newDiv2.className = "button button_margins";
+				newDiv2.style.left = "10px";
+				newDiv2.appendChild(newDiv);
+				newDiv2.setAttribute("data-name", name);
+				newDiv2.addEventListener("click", function() {
+					centre.clear();
+					requester.set();
+					requester.fetch(name);
+					requester.fetch_streams(name);
+					stream_list.clear();
+					feed_list.selected(newDiv2);
+				});
+				return newDiv2;
+			}
+    	};
+
+    	var feed_create_form = {
+    		html_object: document.getElementById("feed_create"),
+    		name: document.getElementById("create_feed_name"),
+    		refresh: function() {
+    			this.name = document.getElementById("create_feed_name");
+    		}
+    	};
+
+    	var feed_list = {
+    		html_object: document.getElementById("feed_list"),
+    		curr: null,
+    		selected: function(curr_div) {
+    			if (this.curr != null) {
+    				this.curr.classList.toggle("selected");
+    			} else {
+    				stream_create_initiater.html_object.classList.toggle("unselectable");
+    			}
+    			curr_div.classList.toggle("selected");
+    			this.curr = curr_div;
+    		}
+    	};
+
+    	var left_side_bar = {
+    		feed_create_initiater: feed_create_initiater,
+    		feed_create_completer: feed_create_completer,
+    		feed_create_form: feed_create_form,
+    		feed_list: feed_list,
+    		intitialize: function() {
+    			this.feed_create_initiater.intitialize();
+    			this.feed_create_initiater.html_object.addEventListener("click", function() {
+    				left_side_bar.feed_create_initiater.action(left_side_bar.feed_create_form.html_object);
+    			});
+    			this.feed_create_completer.html_object.addEventListener("click", function() {
+    				left_side_bar.feed_create_form.refresh();
+    				left_side_bar.feed_create_completer.action(left_side_bar.feed_create_form, left_side_bar.feed_list.html_object);
+    				left_side_bar.feed_create_initiater.action(left_side_bar.feed_create_form.html_object);
+    			});
+    		}
+    	};
+
+
+    	left_side_bar.intitialize();
+
+
+   
+    	var stream_create_initiater = {
+    		html_object: document.getElementById("stream_create"),
+    		curr_action: null,
+    		start: function(stream_create_form, stream_choose_form) {
+				setTimeout(function(){
+				   	stream_create_form.classList.toggle("unhidden");
+				}, 0);
+				this.curr_action = this.close_1;
+	    	},
+    		close_1: function(stream_create_form, stream_choose_form) {
+		  		setTimeout(function(){
+				   	stream_create_form.classList.toggle("unhidden");
+				}, 0);
+		  		this.curr_action = this.start;
+    		},
+    		close_2: function(stream_create_form, stream_choose_form) {
+		  		setTimeout(function(){
+				   	stream_create_form.classList.toggle("unhidden");
+				   	stream_choose_form.classList.toggle("unhidden");
+				}, 0);
+		  		this.curr_action = this.start;
+    		},
+    		close_switch: function() {
+    			if (this.curr_action == this.close_1) {
+    				this.curr_action = this.close_2;
+    			} else if (this.curr_action == this.close_2) {
+    				this.curr_action = this.close_1;
+    			}
+    		},
+    		action: function(stream_create_form, stream_choose_form) {
+    			this.curr_action(stream_create_form, stream_choose_form);
+    		},
+    		intitialize: function() {
+    			this.curr_action = this.start;
+    		}
+    	};
+
+
+   		var stream_create_form = {
+    		html_object: document.getElementById("stream_list_form"),
+    		name: document.getElementById("create_stream_name"),
+    		url: document.getElementById("create_stream_url"),
+    		refresh: function() {
+    			this.name = document.getElementById("create_stream_name");
+    			this.url = document.getElementById("create_stream_url");
+    		}
+    	};
+
+    	var stream_create_stepper = {
+    		html_object_page1: document.getElementById("stream_list_create"),
+    		html_object_page2: stream_create_form,
+    		rsspodcast_node: document.getElementById("rsspodcast_node"),
+    		curr_feed: null,
+    		initialize: function() {
+    			this.rsspodcast_node.addEventListener("click", function() {
+    				stream_create_stepper.select("rss_podcast");
+    			});
+    		},
+    		select: function(feed) {
+    			this.html_object_page2.html_object.classList.toggle("unhidden");
+    			stream_create_initiater.close_switch();
+    			this.curr_feed = feed;
+    		}
+    	};
+
+    	var stream_create_completer = {
+    		html_object: document.getElementById("create_stream"),
+    		action: function(stream_create_form, stream) {
+				var stream_obj = this.create_object(stream_create_form.name.value, stream_create_form.url.value);
+				stream.appendChild(stream_obj);
+				requester.stream_request(stream_create_form.name.value, stream_create_form.url.value);
+				stream_create_form.name.value = "";		
+				stream_create_form.url.value = "";
+
+			},
+			create_object: function (name, url) {
+				var newDiv2 = document.createElement("div"); 
+				var newDiv = document.createElement("div"); 
+				var newContent = document.createTextNode(name); 
+				newDiv.className = "button_text";
+				newDiv.style.left = "70px";
+				newDiv.appendChild(newContent);  
+				newDiv2.className = "button button_margins";
+				newDiv2.style.left = "10px";
+				newDiv2.appendChild(newDiv);
+				newDiv2.setAttribute("data-name", name);
+				return newDiv2;
+			},
+			action1: function(name, stream) {
+				var stream_obj = this.create_object(name, "TEST");
+				stream.appendChild(stream_obj);
+			}
+    	};
+
+
+    	//Make this work now;
+    	var stream_list = {
+    		html_object:document.getElementById("stream_list"),
+    		//Allow for refrsh and cleaning Hence
+    		clear: function() {
+    			var child = this.html_object.firstChild;
+    			while(child) {
+    				this.html_object.removeChild(child);
+    				child = this.html_object.firstChild;
+    			}
+    		}
+
+    	};
+
+
+
+    	var right_side_bar = {
+			stream_create_initiater: stream_create_initiater,
+    		html_object_page1: document.getElementById("stream_list_create"),
+    		stream_create_stepper: stream_create_stepper,
+    		stream_create_completer: stream_create_completer,
+    		stream_list: stream_list,
+    		initialize: function() {
+    			this.stream_create_stepper.initialize();
+    			this.stream_create_initiater.intitialize();
+    			this.stream_create_initiater.html_object.addEventListener("click", function() {
+    				right_side_bar.stream_create_initiater.action(stream_create_stepper.html_object_page1, stream_create_stepper.html_object_page2.html_object);
+    			});
+
+
+    			this.stream_create_completer.html_object.addEventListener("click", function() {
+    				right_side_bar.stream_create_initiater.action(stream_create_stepper.html_object_page1, stream_create_stepper.html_object_page2.html_object);
+    				right_side_bar.stream_create_completer.action(stream_create_stepper.html_object_page2, stream_list.html_object);
+    			});
+    		}
+    	};
+
+
+    	right_side_bar.initialize();
+
+
+    	var centre = {
+    		html_object: document.getElementById("center"),
+    		clear: function() {
+    			requester.date = null;
+    			var child = this.html_object.firstChild;
+    			while(child) {
+    				this.html_object.removeChild(child);
+    				child = this.html_object.firstChild;
+    			}
+    		},
+
+    		add: function(date, title, audio, icon, description) {
+   				var obj = this.create_sound_object(date, title, audio, icon, description);
+    			this.html_object.appendChild(obj);
+    		},
+
+    		create_sound_object: function(date, title, audio, icon,description) {
+    			var descrip = document.createElement("div");
+    			descrip.className = "centre_description";
+    			descrip.innerHTML = description;
+
+
+    			var audA = document.createElement("div");
+    			audA.className = "centre_audio_content";
+
+    			var aud = document.createElement("audio");
+    			aud.controls = "controls";
+
+    			var img = document.createElement("img");
+    			img.src = icon;
+    			img.className = "icon";
+    			var sour1 = document.createElement("source");
+    			sour1.src = audio;
+    			sour1.type = 'audio/ogg';
+    			var sour2 = document.createElement("source");
+    			sour2.src = audio;
+    			sour2.type ='audio/mpeg';
+    			aud.appendChild(sour1);
+    			aud.appendChild(sour2);
+    			audA.appendChild(img);
+    			audA.appendChild(aud);
+
+    			var tite = document.createElement("div");
+    			tite.className = "centre_title";
+    			tite.appendChild(document.createTextNode(title));
+
+    			var dae = document.createElement("div");
+    			dae.className = "centre_date";
+    			dae.appendChild(document.createTextNode(date));
+
+
+    			var content = document.createElement("div");
+    			content.className = "centre_content";
+    			content.appendChild(dae);
+    			content.appendChild(tite);
+    			content.appendChild(audA);
+    			content.appendChild(descrip);
+
+    			var enc = document.createElement("div");
+    			enc.className = "centre_enclosure";
+    			enc.appendChild(content);
+    			
+    			return enc;
+    		},
+
+    		initialize: function() {
+    			centre.html_object.addEventListener("scroll",  function() {  
+	    			if (centre.html_object.scrollHeight-centre.html_object.scrollTop-centre.html_object.clientHeight < 1) {
+	    				requester.fetch(feed_list.curr.dataset.name);
+	    			}
+    			});
+    		}
+    	}
+
+    	centre.initialize();
+
+
+    </script>
+
+
+</html>
