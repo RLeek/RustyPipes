@@ -382,14 +382,16 @@
 						alert(request.responseText);
 
 						var data = localStorage.getItem('Data');
-					 	persistent_data.storage_values = JSON.parse(data);
-					 	alert(data);
-						var i;
-						for (i = 0; i < persistent_data.storage_values.length; i++) {	
-							feed_create_completer.action2(persistent_data.storage_values[i]["name"], left_side_bar.feed_list.html_object);
-							//feed_create_completer.action2(Object.keys(storage_values[i])[0], left_side_bar.feed_list.html_object);
-						}	
+						if (data != null) {
+						 	persistent_data.storage_values = JSON.parse(data);
+						 	alert(data);
 
+							var i;
+							for (i = 0; i < persistent_data.storage_values.length; i++) {	
+								feed_create_completer.action2(persistent_data.storage_values[i]["name"], left_side_bar.feed_list.html_object);
+								//feed_create_completer.action2(Object.keys(storage_values[i])[0], left_side_bar.feed_list.html_object);
+							}	
+						}
 
 
 
