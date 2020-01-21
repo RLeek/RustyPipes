@@ -521,7 +521,9 @@
     		action: function(form_create_form, feed) {
 				var feed_obj = this.create_object(form_create_form.name.value);
 				feed.appendChild(feed_obj);
+				alert("THIS RAN");
 				this.appender(form_create_form.name.value);
+				alert("THIS RAN2");
 				requester.feed_request(form_create_form.name.value);
 				form_create_form.name.value = "";		
 			},
