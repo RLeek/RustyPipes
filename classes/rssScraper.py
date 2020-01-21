@@ -12,7 +12,7 @@ class rssScraper(node):
 		web_page = urllib.request.urlopen(url);
 		strainer = SoupStrainer("item");
 		self._url = url;
-		self._soup = BeautifulSoup(web_page, "xml", parse_only = strainer);
+		self._soup = BeautifulSoup(web_page, "lxml", parse_only = strainer);
 
 	def get_url(self):
 		return self._url;
@@ -30,7 +30,7 @@ class rssScraper(node):
 
 	def fetch(self, startDate, endDate):
 		podcast = self.get_soup().find("item");
-		date = datetime.strptime(podcast.find('pubDate').text[5:16], "%d %b %Y");
+		date = datetime.strptime(podcast.find('pubdate').text[5:16], "%d %b %Y");
 		json_list = []
 		i = 0;
 		while(date >= endDate):
@@ -39,16 +39,18 @@ class rssScraper(node):
 				if (item != None):
 					json_list.append(item);
 			podcast = podcast.find_next("item");
-			date = datetime.strptime(podcast.find('pubDate').text[5:16], "%d %b %Y");
+			date = datetime.strptime(podcast.find('pubdate').text[5:16], "%d %b %Y");
 			i = i + 1;
 		return json_list;
 
 	def json_converter(self, podcast):
 		json_podcast = {};
 		try:
+			print(str(podcast.find('description'))[13:-20]);
+			print("TRYING \n\n\n\n\n\n");
 			json_podcast["title"] = podcast.find('title').text;
-			json_podcast["date"] = (datetime.strptime(podcast.find('pubDate').text[5:16], "%d %b %Y")).strftime('%m/%d/%Y');
-			json_podcast["description"] = podcast.find('description').text;
+			json_podcast["date"] = (datetime.strptime(podcast.find('pubdate').text[5:16], "%d %b %Y")).strftime('%m/%d/%Y');
+			json_podcast["description"] = str(podcast.find('description'))[13:-20];
 			json_podcast["icon"] = podcast.find('itunes:image')['href'];
 			json_podcast["link"] = podcast.find('enclosure')['url'];
 		except:

@@ -27,3 +27,7 @@ class feedManager():
 	def addFeedStream(self, name, stream_name, node):
 		self.getFeedByName(name).addStream(stream(node,stream_name));
 
+	def clearFeeds(self, code):
+		for feed in self.getFeeds():
+			if (feed.getName().endswith(code)):
+				self._feeds.remove(feed);

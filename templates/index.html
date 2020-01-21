@@ -281,11 +281,6 @@
 	<!--Centre hand bar-->
 	<div class="center" id = "center">
 
-
-
-
-
-
 	</div>
 
 
@@ -328,50 +323,141 @@
 </body>
     <script>
     	
+
+
+    	//-todo:
+    		//-adding streams stored locally to the server
+    			//Ensure streams actually hold associated URL
+
+
+    		//Creating method of finding unique ID
+    			//Deleting streams once user session is over
+
+
+    		//Deploy
+
+
+
+
+    		//-Write in react.js
+    		//-Providing method to delete
+
+
+    	var storage_values = [];
+
+
+		window.onload = function() {
+			requester.code_request();
+
+		};
+
+
+
+
+
+
+
+    	//Sends requests
     	var requester = {
     		day: 10,
     		month: 10,
     		year: 10,
+    		code: 0,
+
+
+    		loaded:0,
+    		size:0,
+
+
+
+    		code_request: function() {
+				var request = new XMLHttpRequest();
+				request.open("GET", "/code");
+				request.onreadystatechange = function() {
+					if (request.readyState == 4) {
+						requester.code = request.responseText;
+						alert(request.responseText);
+
+						var data = localStorage.getItem('Data');
+					 	storage_values = JSON.parse(data);
+					 	alert(data);
+						var i;
+						for (i = 0; i < storage_values.length; i++) {	
+							feed_create_completer.action2(storage_values[i]["name"], left_side_bar.feed_list.html_object);
+							//feed_create_completer.action2(Object.keys(storage_values[i])[0], left_side_bar.feed_list.html_object);
+						}	
+
+
+
+
+					}
+				}
+				request.send();
+    		},
+
+
 			feed_request: function(name) {
+
 				  	var request = new XMLHttpRequest();
-				  	request.open("GET", "/createFeed?name=" + name);
+				  	request.open("GET", "/createFeed?name=" + name+requester.code);
 				  	request.onreadystatechange = function() {
 				  		if (request.readyState == 4) {
+
+
+
 				  		}
 				  	}
+
 				  	request.send();
 			},
 
-			stream_request: function(name, url) {
+			stream_request: function(parent, name,type, url, refresh) {
+				alert(url);
+				alert(refresh)
 				var request = new XMLHttpRequest();
-				request.open("GET", "/createStream?type="+stream_create_stepper.curr_feed
-					+"&url="+url+"&name="+name+"&feed_name="+feed_list.curr.dataset.name);
+				request.open("GET", "/createStream?type="+type
+					+"&url="+url+"&name="+name+"&feed_name="+feed_list.curr.dataset.name+requester.code);
 				request.onreadystatechange = function() {
 					if (request.readyState == 4) {
+						requester.loaded = requester.loaded + 1;
+						alert(requester.loaded);
+						alert(requester.size)
+						if (refresh == "true" && (requester.size == requester.loaded))  {
+							requester.fetch(parent)
+						}
 
 					}
 				}
 				request.send();
 			},
 
-			fetch_streams: function(name) {
-				var request = new XMLHttpRequest();
-				request.open("GET", "/getStreams?name=" + name);
-				request.onreadystatechange = function() {
-				  	if (request.readyState == 4) {
-				  		var requestText = JSON.parse(request.responseText);
-				  		var i = 0;
-				  		while(i < requestText.length) {
-				  			stream_create_completer.action1(requestText[i].name, stream_list.html_object);
-				  			i = i + 1;
-				  		}
-				  	}
+			fetch_streams: function(name, loaded) {
+				this.size = 0;
+				this.loaded = 0;
+				var i;
+				for (i = 0; i < storage_values.length; i++) {	
+
+					if (storage_values[i]["name"] == name) {
+						var i2;
+						size = storage_values[i]["streams"].length;
+						for (i2 = 0; i2 < storage_values[i]["streams"].length; i2++) {
+							var key = storage_values[i]["streams"][i2]["name"];
+							var value = storage_values[i]["streams"][i2]["url"];
+							var type = storage_values[i]["streams"][i2]["type"];
+							this.size = storage_values[i]["streams"].length;
+							stream_create_completer.action1(key, value, stream_list.html_object);
+							if (loaded == "false") {
+								requester.stream_request(name, key, type, value, "true");							
+							}
+						}
+					}
 				}
-				request.send();
 			},
+
+
 			fetch: function(name) {
 				var request = new XMLHttpRequest();
-				request.open("GET", "/fetch?name=" + name+"&day="+this.day+"&month="+this.month+"&year="+this.year);
+				request.open("GET", "/fetch?name=" + name+requester.code+"&day="+this.day+"&month="+this.month+"&year="+this.year);
 
 				request.onreadystatechange = function() {
 					if (request.readyState == 4) {
@@ -402,7 +488,10 @@
 				this.year = currentTime.getFullYear();
 			}
     	};
-	
+
+
+
+		//Deals with feed form
     	var feed_create_initiater = {
     		html_object: document.getElementById("new_feed"),
     		curr_action: null,
@@ -426,15 +515,43 @@
     		}
     	};
 
+    	//Creates the associated feed object
     	var feed_create_completer = {
     		html_object: document.getElementById("create_feed"),
     		action: function(form_create_form, feed) {
 				var feed_obj = this.create_object(form_create_form.name.value);
 				feed.appendChild(feed_obj);
+				this.appender(form_create_form.name.value);
 				requester.feed_request(form_create_form.name.value);
 				form_create_form.name.value = "";		
 			},
+			action2: function(name, feed) {
+				var feed_obj = this.create_object(name);
+				feed.appendChild(feed_obj);
+				requester.feed_request(name);
+			},
+			appender: function(name) {
+
+				
+				feed = {
+					"name": name,
+					"streams":[]
+				};
+				storage_values.push(feed);
+				localStorage.setItem('Data',JSON.stringify(storage_values));
+				
+
+				/*
+				var story = {};
+				story[name] = [];
+				storage_values.push(story);
+				localStorage.setItem('Data',JSON.stringify(storage_values));
+				*/
+
+			},
+
 			create_object: function (name) {
+
 				var newDiv2 = document.createElement("div"); 
 				var newDiv = document.createElement("div"); 
 				var newContent = document.createTextNode(name); 
@@ -445,13 +562,28 @@
 				newDiv2.style.left = "10px";
 				newDiv2.appendChild(newDiv);
 				newDiv2.setAttribute("data-name", name);
+				newDiv2.setAttribute("data-loaded", "false");
 				newDiv2.addEventListener("click", function() {
 					centre.clear();
 					requester.set();
-					requester.fetch(name);
-					requester.fetch_streams(name);
-					stream_list.clear();
 					feed_list.selected(newDiv2);
+
+
+					stream_list.clear();
+
+					requester.fetch_streams(name, newDiv2.dataset.loaded);
+
+
+					if (newDiv2.dataset.loaded == "true") {
+						requester.fetch(name);
+					}
+					//requester.fetch(name);
+
+
+
+
+					newDiv2.setAttribute("data-loaded", "true");
+
 				});
 				return newDiv2;
 			}
@@ -572,11 +704,58 @@
     		action: function(stream_create_form, stream) {
 				var stream_obj = this.create_object(stream_create_form.name.value, stream_create_form.url.value);
 				stream.appendChild(stream_obj);
-				requester.stream_request(stream_create_form.name.value, stream_create_form.url.value);
+				requester.stream_request("", stream_create_form.name.value, stream_create_stepper.curr_feed ,stream_create_form.url.value, "false");
+				this.appender(stream_create_form.name.value, stream_create_stepper.curr_feed, stream_create_form.url.value);
 				stream_create_form.name.value = "";		
 				stream_create_form.url.value = "";
 
 			},
+
+			appender: function(name, type, url) {
+
+
+
+
+
+				
+				stream = {
+					"name": name,
+					"type": type,
+					"url": url
+				};
+
+
+				var i;
+				for (i = 0; i < storage_values.length; i++) {					
+					if (storage_values[i]["name"] == feed_list.curr.dataset.name) {
+						storage_values[i]["streams"].push(stream);
+					}
+				}				
+				localStorage.setItem('Data',JSON.stringify(storage_values));
+
+				
+
+
+				/*
+				var story = {};
+				story[name] = url;
+				var i;
+				for (i = 0; i < storage_values.length; i++) {					
+					if (Object.keys(storage_values[i])[0] == feed_list.curr.dataset.name) {
+						storage_values[i][feed_list.curr.dataset.name].push(story);
+					}
+				}				
+				localStorage.setItem('Data',JSON.stringify(storage_values));
+				*/
+
+
+
+
+
+
+			},
+
+
 			create_object: function (name, url) {
 				var newDiv2 = document.createElement("div"); 
 				var newDiv = document.createElement("div"); 
@@ -588,12 +767,15 @@
 				newDiv2.style.left = "10px";
 				newDiv2.appendChild(newDiv);
 				newDiv2.setAttribute("data-name", name);
+				newDiv2.setAttribute("data-url", url);
 				return newDiv2;
 			},
-			action1: function(name, stream) {
-				var stream_obj = this.create_object(name, "TEST");
+
+			action1: function(name, url, stream) {
+				var stream_obj = this.create_object(name, url);
 				stream.appendChild(stream_obj);
 			}
+
     	};
 
 
@@ -633,7 +815,6 @@
     			});
     		}
     	};
-
 
     	right_side_bar.initialize();
 
@@ -688,7 +869,6 @@
     			dae.className = "centre_date";
     			dae.appendChild(document.createTextNode(date));
 
-
     			var content = document.createElement("div");
     			content.className = "centre_content";
     			content.appendChild(dae);
@@ -713,6 +893,13 @@
     	}
 
     	centre.initialize();
+
+
+		window.addEventListener("unload", function logData() {
+		  navigator.sendBeacon("/unload", requester.code);
+		});
+
+
 
 
     </script>
