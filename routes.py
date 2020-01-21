@@ -1,11 +1,17 @@
 from flask import Flask, render_template,request
 from classes.feedManager import feedManager
+from classes.codeManager import codeManager
 from classes.rssScraper import rssScraper
 from datetime import datetime, timedelta
 import json;
 app = Flask(__name__)
 
 FeedManager = feedManager();
+codeManager = codeManager();
+
+@app.route('/code')
+def code():
+	return str(codeManager.get_code());
 
 
 @app.route('/')
@@ -20,6 +26,7 @@ def getStreams():
 @app.route('/createFeed', methods = ['GET'])
 def createFeed():
 	print(request.args.get("name"));
+	print("\n\n\n\n\n\n\n\n\n");
 	FeedManager.addFeed(request.args.get("name"));
 	return "Ok";
 
@@ -27,7 +34,9 @@ def createFeed():
 @app.route('/createStream', methods = ['GET'])
 def createStream():
 	if (request.args.get("type") == "rss_podcast"):
-		print("THIS WORKED");
+		print(request.args.get("url"));
+		print("THIS WORKED\n\n\n\n\n\n\n\n");
+
 		node = rssScraper(request.args.get("url"));
 		FeedManager.addFeedStream(request.args.get("feed_name"), request.args.get("name"), node);
 	return "Ok";
@@ -56,4 +65,18 @@ def fetch():
 	print(list1);
 
 	return json.dumps(list1);	
+
+
+
+
+
+@app.route('/unload', methods = ['POST'])
+def unload():
+	code = request.get_data().decode('utf-8');
+
+	codeManager.remove_code(code);
+	feedManager.clearFeeds(code);
+
+	print(code);
+	return "Ok";
 	
