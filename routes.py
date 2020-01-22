@@ -11,20 +11,29 @@ codeManager = codeManager();
 
 @app.route('/code')
 def code():
+	global FeedManager;
+	global codeManager;
+
+
 	return str(codeManager.get_code());
 
 
 @app.route('/')
 def index_page():
+	global FeedManager;
 	return render_template('index.html');
 
 @app.route('/getStreams', methods = ['GET'])
 def getStreams():
+	global FeedManager;
+
 	print(json.dumps(FeedManager.getFeedByName(request.args.get("name")).jsonGetStreams()));
 	return json.dumps(FeedManager.getFeedByName(request.args.get("name")).jsonGetStreams());
 
 @app.route('/createFeed', methods = ['GET'])
 def createFeed():
+	global FeedManager;
+
 	print(request.args.get("name"));
 	print("\n\n\n\n\n\n\n\n\n");
 	FeedManager.addFeed(request.args.get("name"));
@@ -40,6 +49,9 @@ def createFeed():
 
 @app.route('/createStream', methods = ['GET'])
 def createStream():
+	global FeedManager;
+
+
 	if (request.args.get("type") == "rss_podcast"):
 		print(request.args.get("url"));
 		print(request.args.get("feed_name"));
@@ -58,6 +70,9 @@ def createStream():
 
 @app.route('/fetch', methods = ['GET'])
 def fetch():
+
+	global FeedManager;
+
 	print("NAME: \n\n\n\n\n\n\n\n\n");
 	print(request.args.get("name"));
 
@@ -95,6 +110,10 @@ def fetch():
 
 @app.route('/unload', methods = ['POST'])
 def unload():
+
+	global FeedManager;
+	global codeManager;
+
 	code = request.get_data().decode('utf-8');
 
 	codeManager.remove_code(code);
