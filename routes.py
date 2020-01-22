@@ -29,7 +29,8 @@ def createFeed():
 	print("\n\n\n\n\n\n\n\n\n");
 	FeedManager.addFeed(request.args.get("name"));
 	print("FEED SHOULD HAVE BEEN CREATED HERE");
-	#print(JSON.stringify(FeedManager.getFeeds));
+	print(len(FeedManager.getFeeds()));
+
 	for i in FeedManager.getFeeds():
 		print(i.getName());
 
@@ -41,9 +42,9 @@ def createFeed():
 def createStream():
 	if (request.args.get("type") == "rss_podcast"):
 		print(request.args.get("url"));
-		print("THIS WORKED\n\n\n\n\n\n\n\n");
 		print(request.args.get("feed_name"));
-		print("THIS WORKED\n\n\n\n\n\n\n\n");
+		print(request.args.get("name"));
+		print(len(FeedManager.getFeeds()));
 
 
 		for i in FeedManager.getFeeds():
@@ -61,7 +62,7 @@ def fetch():
 	print(request.args.get("name"));
 
 
-
+	print(len(FeedManager.getFeeds()));
 	for i in FeedManager.getFeeds():
 		print(i.getName());
 		print("RED WATER\n\n\n\n\n");
