@@ -59,6 +59,13 @@ def createStream():
 def fetch():
 	print("NAME: \n\n\n\n\n\n\n\n\n");
 	print(request.args.get("name"));
+
+
+
+	for i in FeedManager.getFeeds():
+		print(i.getName());
+		print("RED WATER\n\n\n\n\n");
+
 	curr_date = datetime(int(request.args.get("year")), int(request.args.get("month")), int(request.args.get("day")));
 	day = 1;
 	list1 = FeedManager.fetchFeed(curr_date, curr_date - timedelta(days=day), request.args.get("name"));

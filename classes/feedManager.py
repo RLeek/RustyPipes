@@ -30,4 +30,4 @@ class feedManager():
 	def clearFeeds(self, code):
 		for feed in self.getFeeds():
 			if (feed.getName().endswith(code)):
-				self._feeds.remove(feed);
+				self.getFeeds().remove(feed);
