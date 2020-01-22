@@ -36,6 +36,8 @@ def createStream():
 	if (request.args.get("type") == "rss_podcast"):
 		print(request.args.get("url"));
 		print("THIS WORKED\n\n\n\n\n\n\n\n");
+		print(request.args.get("feed_name"));
+		print("THIS WORKED\n\n\n\n\n\n\n\n");
 
 		node = rssScraper(request.args.get("url"));
 		FeedManager.addFeedStream(request.args.get("feed_name"), request.args.get("name"), node);
