@@ -29,7 +29,7 @@ def createFeed():
 	print("\n\n\n\n\n\n\n\n\n");
 	FeedManager.addFeed(request.args.get("name"));
 	print("FEED SHOULD HAVE BEEN CREATED HERE");
-	print(JSON.stringify(FeedManager.getFeeds));
+	#print(JSON.stringify(FeedManager.getFeeds));
 	for i in FeedManager.getFeeds():
 		print(i.getName());
 
