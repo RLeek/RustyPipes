@@ -40,7 +40,7 @@ def createStream():
 		print("THIS WORKED\n\n\n\n\n\n\n\n");
 
 
-		for i in FeedManager.getStreams():
+		for i in FeedManager.getFeeds():
 			print(i);
 			print("RED WATER\n\n\n\n\n");
 
