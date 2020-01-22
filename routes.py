@@ -41,7 +41,7 @@ def createStream():
 
 
 		for i in FeedManager.getFeeds():
-			print(i);
+			print(i.getName());
 			print("RED WATER\n\n\n\n\n");
 
 		node = rssScraper(request.args.get("url"));
