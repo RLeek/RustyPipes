@@ -97,7 +97,7 @@ def unload():
 	code = request.get_data().decode('utf-8');
 
 	codeManager.remove_code(code);
-	feedManager.clearFeeds(code);
+	#feedManager.clearFeeds(code);
 
 	print(code);
 	return "Ok";
