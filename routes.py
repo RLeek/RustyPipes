@@ -3,91 +3,92 @@ from classes.feedManager import feedManager
 from classes.codeManager import codeManager
 from classes.rssScraper import rssScraper
 from datetime import datetime, timedelta
+from classes.db import databaser
+import sys
+
+
 import json;
 app = Flask(__name__)
 
-FeedManager = feedManager();
 codeManager = codeManager();
+sys.setrecursionlimit(8000);
 
 @app.route('/code')
 def code():
-	global FeedManager;
-	global codeManager;
-
-
 	return str(codeManager.get_code());
 
 
 @app.route('/')
 def index_page():
-	global FeedManager;
 	return render_template('index.html');
 
 @app.route('/getStreams', methods = ['GET'])
 def getStreams():
-	global FeedManager;
+	db =  databaser();
+	feedMan = db.retrieve_manager();
 
-	print(json.dumps(FeedManager.getFeedByName(request.args.get("name")).jsonGetStreams()));
-	return json.dumps(FeedManager.getFeedByName(request.args.get("name")).jsonGetStreams());
+	value = json.dumps(feedMan.getFeedByName(request.args.get("name")).jsonGetStreams());
+	print(value);
+	db.close();
+	return value;
 
 @app.route('/createFeed', methods = ['GET'])
 def createFeed():
-	global FeedManager;
 
-	print(request.args.get("name"));
-	print("\n\n\n\n\n\n\n\n\n");
-	FeedManager.addFeed(request.args.get("name"));
-	print("FEED SHOULD HAVE BEEN CREATED HERE");
-	print(len(FeedManager.getFeeds()));
+	db =  databaser();
+	feedMan = db.retrieve_manager();
+	feedMan.addFeed(request.args.get("name"));
 
-	for i in FeedManager.getFeeds():
+	for i in feedMan.getFeeds():
 		print(i.getName());
 
-
+	db.update_manager(feedMan);
 	return "Ok";
 
 
 @app.route('/createStream', methods = ['GET'])
 def createStream():
-	global FeedManager;
-
-
 	if (request.args.get("type") == "rss_podcast"):
-		print(request.args.get("url"));
-		print(request.args.get("feed_name"));
-		print(request.args.get("name"));
-		print(len(FeedManager.getFeeds()));
+
+		db =  databaser();
+		feedMan = db.retrieve_manager();
+		print(len(feedMan.getFeeds()));
 
 
-		for i in FeedManager.getFeeds():
+		for i in feedMan.getFeeds():
 			print(i.getName());
 			print("RED WATER\n\n\n\n\n");
 
 		node = rssScraper(request.args.get("url"));
-		FeedManager.addFeedStream(request.args.get("feed_name"), request.args.get("name"), node);
+		feedMan.addFeedStream(request.args.get("feed_name"), request.args.get("name"), node);
+
+	db.update_manager(feedMan);
+
 	return "Ok";
 
 
 @app.route('/fetch', methods = ['GET'])
 def fetch():
 
-	global FeedManager;
+	db =  databaser();
+	feedMan = db.retrieve_manager();
+
 
 	print("NAME: \n\n\n\n\n\n\n\n\n");
 	print(request.args.get("name"));
 
 
-	print(len(FeedManager.getFeeds()));
-	for i in FeedManager.getFeeds():
+	print(len(feedMan.getFeeds()));
+	for i in feedMan.getFeeds():
 		print(i.getName());
-		print("RED WATER\n\n\n\n\n");
+		print("RED WATERzzzzzzzz\n\n\n\n\n");
 
 	curr_date = datetime(int(request.args.get("year")), int(request.args.get("month")), int(request.args.get("day")));
 	day = 1;
-	list1 = FeedManager.fetchFeed(curr_date, curr_date - timedelta(days=day), request.args.get("name"));
+	list1 = feedMan.fetchFeed(curr_date, curr_date - timedelta(days=day), request.args.get("name"));
 	while(len(list1) < 10):
 		day = day*2;
-		list1 = FeedManager.fetchFeed(curr_date, curr_date - timedelta(days=day), request.args.get("name"));
+		list1 = feedMan.fetchFeed(curr_date, curr_date - timedelta(days=day), request.args.get("name"));
 	
 
 	list1 = sorted(list1, key=lambda x: x['date'], reverse = True);
@@ -101,6 +102,7 @@ def fetch():
 
 	list1.append(date);
 	print(list1);
+	db.close();
 
 	return json.dumps(list1);	
 
@@ -111,14 +113,14 @@ def fetch():
 @app.route('/unload', methods = ['POST'])
 def unload():
 
-	global FeedManager;
-	global codeManager;
+	db =  databaser();
+	feedMan = db.retrieve_manager();
 
 	code = request.get_data().decode('utf-8');
 
 	codeManager.remove_code(code);
-	#feedManager.clearFeeds(code);
+	feedMan.clearFeeds(code);
+	db.update_manager(feedMan);
 
-	print(code);
 	return "Ok";
 	

@@ -12,7 +12,7 @@ class rssScraper(node):
 		web_page = urllib.request.urlopen(url);
 		strainer = SoupStrainer("item");
 		self._url = url;
-		self._soup = BeautifulSoup(web_page, "lxml", parse_only = strainer);
+		self._soup = str(BeautifulSoup(web_page, "lxml", parse_only = strainer));
 
 	def get_url(self):
 		return self._url;
@@ -21,7 +21,7 @@ class rssScraper(node):
 		return self._soup
 
 	def set_soup(self, soup):
-		self._soup = soup;
+		self._soup = str(soup);
 
 	def update(self):
 		web_page = urllib.request(self.get_url());
@@ -29,7 +29,8 @@ class rssScraper(node):
 		self.set_soup(BeautifulSoup(web_page, "xml", parse_only = strainer));
 
 	def fetch(self, startDate, endDate):
-		podcast = self.get_soup().find("item");
+
+		podcast = BeautifulSoup(self.get_soup(), "lxml").find("item");
 		date = datetime.strptime(podcast.find('pubdate').text[5:16], "%d %b %Y");
 		json_list = []
 		i = 0;
