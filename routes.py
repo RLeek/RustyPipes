@@ -1,97 +1,65 @@
 from flask import Flask, render_template,request
-from classes.feedManager import feedManager
 from classes.codeManager import codeManager
 from classes.rssScraper import rssScraper
+from classes.Feed import feed
 from datetime import datetime, timedelta
-from classes.db import databaser
-import sys
+from classes.database import database
 
 
 import json;
 app = Flask(__name__)
 
 codeManager = codeManager();
-sys.setrecursionlimit(8000);
 
+#This will rarely break
+#Should deal with this concurrency issue
+#eventually;
 @app.route('/code')
 def code():
 	return str(codeManager.get_code());
 
-
+#No change required
 @app.route('/')
 def index_page():
 	return render_template('index.html');
 
-@app.route('/getStreams', methods = ['GET'])
-def getStreams():
-	db =  databaser();
-	feedMan = db.retrieve_manager();
 
-	value = json.dumps(feedMan.getFeedByName(request.args.get("name")).jsonGetStreams());
-	print(value);
-	db.close();
-	return value;
+#getStreams Removed (This is stored locally)
 
-@app.route('/createFeed', methods = ['GET'])
-def createFeed():
+#createFeed Removed (This is just a variable in the table)
 
-	db =  databaser();
-	feedMan = db.retrieve_manager();
-	feedMan.addFeed(request.args.get("name"));
-
-	for i in feedMan.getFeeds():
-		print(i.getName());
-
-	db.update_manager(feedMan);
-	return "Ok";
-
-
+#Can be considered fixed I think?
 @app.route('/createStream', methods = ['GET'])
 def createStream():
+	infodb = database();
+	rowid = None;
 	if (request.args.get("type") == "rss_podcast"):
+		node = rssScraper(request.args.get("name"), request.args.get("url"));
+		rowid = infodb.createStream(request.args.get("feed_name"), request.args.get("name"),request.args.get("type"),request.args.get("url"), node.get_soup());
+	infodb.close();
+	return str(rowid);
 
-		db =  databaser();
-		feedMan = db.retrieve_manager();
-		print(len(feedMan.getFeeds()));
-
-
-		for i in feedMan.getFeeds():
-			print(i.getName());
-			print("RED WATER\n\n\n\n\n");
-
-		node = rssScraper(request.args.get("url"));
-		feedMan.addFeedStream(request.args.get("feed_name"), request.args.get("name"), node);
-
-	db.update_manager(feedMan);
-
-	return "Ok";
-
-
+#Can be considered fixed I think?
 @app.route('/fetch', methods = ['GET'])
 def fetch():
 
-	db =  databaser();
-	feedMan = db.retrieve_manager();
-
-
-	print("NAME: \n\n\n\n\n\n\n\n\n");
-	print(request.args.get("name"));
-
-
-	print(len(feedMan.getFeeds()));
-	for i in feedMan.getFeeds():
-		print(i.getName());
-		print("RED WATERzzzzzzzz\n\n\n\n\n");
+	infodb = database();
+	retrievedData = infodb.fetchFeedsInfo(request.args.get("name"));
+	streamList = [];
+	for i in retrievedData:
+		if (i[1] == "rss_podcast"):
+			streamList.append(rssScraper(i[0], i[2], i[3]));
+	requestedFeed = feed(streamList);
 
 	curr_date = datetime(int(request.args.get("year")), int(request.args.get("month")), int(request.args.get("day")));
 	day = 1;
-	list1 = feedMan.fetchFeed(curr_date, curr_date - timedelta(days=day), request.args.get("name"));
-	while(len(list1) < 10):
+	posts = requestedFeed.fetch(curr_date, curr_date - timedelta(days=day));
+	while(len(posts) < 10):
 		day = day*2;
-		list1 = feedMan.fetchFeed(curr_date, curr_date - timedelta(days=day), request.args.get("name"));
+		posts = requestedFeed.fetch(curr_date, curr_date - timedelta(days=day));
 	
 
-	list1 = sorted(list1, key=lambda x: x['date'], reverse = True);
+	posts = sorted(posts, key=lambda x: x['date'], reverse = True);
 	curr_date=curr_date-timedelta(days = day);
 	date = [];
 	json_date = {};
@@ -100,27 +68,21 @@ def fetch():
 	json_date["day"] = curr_date.day;
 	date.append(json_date);
 
-	list1.append(date);
-	print(list1);
-	db.close();
+	posts.append(date);
+	infodb.close();
 
-	return json.dumps(list1);	
+	return json.dumps(posts);	
 
-
-
-
-
+#This will rarely break
+#Should deal with this concurrency issue
+#eventually;
 @app.route('/unload', methods = ['POST'])
 def unload():
 
-	db =  databaser();
-	feedMan = db.retrieve_manager();
-
+	infodb =  database();
 	code = request.get_data().decode('utf-8');
-
 	codeManager.remove_code(code);
-	feedMan.clearFeeds(code);
-	db.update_manager(feedMan);
-
+	infodb.deleteFeed(code);
+	infodb.close();
 	return "Ok";
 	

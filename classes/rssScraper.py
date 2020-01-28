@@ -8,11 +8,18 @@ from datetime import datetime
 
 class rssScraper(node):
 	
-	def __init__(self, url):
-		web_page = urllib.request.urlopen(url);
-		strainer = SoupStrainer("item");
+	def __init__(self,name, url, soup="unfinished"):
+		if (soup == "unfinished"):
+			web_page = urllib.request.urlopen(url);
+			strainer = SoupStrainer("item");
+			self._soup = str(BeautifulSoup(web_page, "lxml", parse_only = strainer));
+		else:
+			self._soup = soup;
 		self._url = url;
-		self._soup = str(BeautifulSoup(web_page, "lxml", parse_only = strainer));
+		self._name = name;
+
+	def get_name(self):
+		return self._name;
 
 	def get_url(self):
 		return self._url;
@@ -29,7 +36,6 @@ class rssScraper(node):
 		self.set_soup(BeautifulSoup(web_page, "xml", parse_only = strainer));
 
 	def fetch(self, startDate, endDate):
-
 		podcast = BeautifulSoup(self.get_soup(), "lxml").find("item");
 		date = datetime.strptime(podcast.find('pubdate').text[5:16], "%d %b %Y");
 		json_list = []

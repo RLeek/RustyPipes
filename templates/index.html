@@ -4,7 +4,31 @@
 <style>
 	body {
 		overflow: hidden;
-		background-color: #555962;
+		background-color: #34373d;
+	}
+
+	.loader {
+	  	border: 7px solid #34373d; 
+	  	position:fixed;
+	  	border-top: 7px solid white; 
+	  	border-radius: 60%;
+	  	width: 40px;
+	  	height: 40px;
+	  	animation: spin 0.5s linear infinite;
+	}
+
+	@keyframes spin {
+	  0% { transform: rotate(0deg); }
+	  100% { transform: rotate(360deg); }
+	}
+
+	.centre_mid_text {
+		position:relative;
+		text-align: center;
+		top:14vh;
+		font-family:'Lato';
+		color: white;
+		font-size: 17px;
 	}
 
 	#titlebar {
@@ -280,7 +304,6 @@
 
 	<!--Centre hand bar-->
 	<div class="center" id = "center">
-
 	</div>
 
 
@@ -324,26 +347,6 @@
     <script>
     	
 
-
-    	//-todo:
-    		//-adding streams stored locally to the server
-    			//Ensure streams actually hold associated URL
-
-
-    		//Creating method of finding unique ID
-    			//Deleting streams once user session is over
-
-
-    		//Deploy
-
-
-
-
-    		//-Write in react.js
-    		//-Providing method to delete
-
-
-
     	var persistent_data = {
     		storage_values:[]
     	};
@@ -379,12 +382,10 @@
 				request.onreadystatechange = function() {
 					if (request.readyState == 4) {
 						requester.code = request.responseText;
-						alert(request.responseText);
 
 						var data = localStorage.getItem('Data');
 						if (data != null) {
 						 	persistent_data.storage_values = JSON.parse(data);
-						 	alert(data);
 
 							var i;
 							for (i = 0; i < persistent_data.storage_values.length; i++) {	
@@ -400,35 +401,15 @@
 				request.send();
     		},
 
-
-			feed_request: function(name) {
-
-				  	var request = new XMLHttpRequest();
-				  	request.open("GET", "/createFeed?name=" + name+requester.code);
-				  	request.onreadystatechange = function() {
-				  		if (request.readyState == 4) {
-
-
-
-				  		}
-				  	}
-
-				  	request.send();
-			},
-
 			stream_request: function(parent, name,type, url, refresh) {
-				alert(url);
-				alert(refresh)
 				var request = new XMLHttpRequest();
 				request.open("GET", "/createStream?type="+type
 					+"&url="+url+"&name="+name+"&feed_name="+feed_list.curr.dataset.name+requester.code);
 				request.onreadystatechange = function() {
 					if (request.readyState == 4) {
 						requester.loaded = requester.loaded + 1;
-						alert(requester.loaded);
-						alert(requester.size)
 						if (refresh == "true" && (requester.size == requester.loaded))  {
-							requester.fetch(parent)
+							requester.fetch(parent, "true")
 						}
 
 					}
@@ -460,12 +441,18 @@
 			},
 
 
-			fetch: function(name) {
+			fetch: function(name, loaded) {
+				if (loaded == "true") {
+					centre.load();
+				}
 				var request = new XMLHttpRequest();
 				request.open("GET", "/fetch?name=" + name+requester.code+"&day="+this.day+"&month="+this.month+"&year="+this.year);
 
 				request.onreadystatechange = function() {
 					if (request.readyState == 4) {
+						if (loaded == "true") {
+							centre.clear();
+						}
 
 				  		var requestText = JSON.parse(request.responseText);
 				  		var i = 0;
@@ -526,41 +513,22 @@
     		action: function(form_create_form, feed) {
 				var feed_obj = this.create_object(form_create_form.name.value);
 				feed.appendChild(feed_obj);
-				alert("THIS RAN");
-				alert("WHY IS THIS NOT RUNNING?");
 				this.appender(form_create_form.name.value);
-				alert("THIS RAN2");
-				requester.feed_request(form_create_form.name.value);
 				form_create_form.name.value = "";		
 			},
 			action2: function(name, feed) {
 				var feed_obj = this.create_object(name);
 				feed.appendChild(feed_obj);
-				requester.feed_request(name);
 			},
 			appender: function(name) {
 
-				alert("DID THIS RUNZ BOYZ");
 
 				feed = {
 					"name": name,
 					"streams":[]
 				};
-								alert("DID THIS RU2ddddN");
-								alert(JSON.stringify(window.persistent_data.storage_values));
-								alert(JSON.stringify(feed));
 				persistent_data.storage_values.push(feed);
-				alert("DID THIS RUN");
 				localStorage.setItem('Data',JSON.stringify(persistent_data.storage_values));
-								alert("DID THIS RUN3");
-
-
-				/*
-				var story = {};
-				story[name] = [];
-				storage_values.push(story);
-				localStorage.setItem('Data',JSON.stringify(storage_values));
-				*/
 
 			},
 
@@ -589,7 +557,7 @@
 
 
 					if (newDiv2.dataset.loaded == "true") {
-						requester.fetch(name);
+						requester.fetch(name, "true");
 					}
 					//requester.fetch(name);
 
@@ -849,6 +817,26 @@
     			this.html_object.appendChild(obj);
     		},
 
+    		load: function() {
+    			this.html_object.appendChild(this.create_load_object());
+    		},
+
+    		create_load_object: function() {
+    			var loader = document.createElement("div");
+    			loader.className = "loader";
+				loader.style.right = "50vw";
+				loader.style.top = "12vh";
+				var text_div = document.createElement("div");
+				text_div.className = "centre_mid_text";
+				text_div.innerHTML = "Loading...&ensp;&ensp;&ensp;&ensp;&ensp;"
+				var storage = document.createElement('div');
+				storage.appendChild(loader);
+				storage.appendChild(text_div);
+				return storage;
+    		},
+
+
+
     		create_sound_object: function(date, title, audio, icon,description) {
     			var descrip = document.createElement("div");
     			descrip.className = "centre_description";
@@ -900,7 +888,7 @@
     		initialize: function() {
     			centre.html_object.addEventListener("scroll",  function() {  
 	    			if (centre.html_object.scrollHeight-centre.html_object.scrollTop-centre.html_object.clientHeight < 1) {
-	    				requester.fetch(feed_list.curr.dataset.name);
+	    				requester.fetch(feed_list.curr.dataset.name, "false");
 	    			}
     			});
     		}
