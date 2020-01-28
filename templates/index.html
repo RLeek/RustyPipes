@@ -451,26 +451,26 @@
 
 				request.onreadystatechange = function() {
 					if (request.readyState == 4) {
-						requester.fetching = false;
-						if (loaded == "true") {
-							centre.clear();
-						}
+						if (feed_list.curr.dataset.name == name) {
+							requester.fetching = false;
+							if (loaded == "true") {
+								centre.clear();
+							}
 
-				  		var requestText = JSON.parse(request.responseText);
-				  		var i = 0;
-				  		while(i < requestText.length-1) {
-				  			centre.add(requestText[i].date, requestText[i].title, requestText[i].link,
-				  				requestText[i].icon,
-				  				requestText[i].description);
-				  			i = i + 1;
-				  		}
+					  		var requestText = JSON.parse(request.responseText);
+					  		var i = 0;
+					  		while(i < requestText.length-1) {
+					  			centre.add(requestText[i].date, requestText[i].title, requestText[i].link,
+					  				requestText[i].icon,
+					  				requestText[i].description);
+					  			i = i + 1;
+					  		}
 
-				  		requester.year = requestText[i][0].year;
-				  		requester.month = requestText[i][0].month;
-				  		requester.day = requestText[i][0].day;
+					  		requester.year = requestText[i][0].year;
+					  		requester.month = requestText[i][0].month;
+					  		requester.day = requestText[i][0].day;
 
-
-
+					  	}
 				  	}
 				}					
 				request.send();
