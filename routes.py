@@ -1,7 +1,7 @@
 from flask import Flask, render_template,request
 from classes.codeManager import codeManager
 from classes.rssScraper import rssScraper
-from classes.Feed import feed
+from classes.feed import feed
 from datetime import datetime, timedelta
 from classes.database import database
 
