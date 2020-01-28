@@ -374,7 +374,7 @@
     		loaded:0,
     		size:0,
 
-
+    		fetching:false,
 
     		code_request: function() {
 				var request = new XMLHttpRequest();
@@ -442,6 +442,7 @@
 
 
 			fetch: function(name, loaded) {
+				this.fetching = true;
 				if (loaded == "true") {
 					centre.load();
 				}
@@ -450,6 +451,7 @@
 
 				request.onreadystatechange = function() {
 					if (request.readyState == 4) {
+						requester.fetching = false;
 						if (loaded == "true") {
 							centre.clear();
 						}
@@ -888,7 +890,10 @@
     		initialize: function() {
     			centre.html_object.addEventListener("scroll",  function() {  
 	    			if (centre.html_object.scrollHeight-centre.html_object.scrollTop-centre.html_object.clientHeight < 1) {
-	    				requester.fetch(feed_list.curr.dataset.name, "false");
+	    				if (requester.fetching == false) {
+
+	    					requester.fetch(feed_list.curr.dataset.name, "false");
+	    				}
 	    			}
     			});
     		}

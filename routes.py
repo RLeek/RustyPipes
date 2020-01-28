@@ -60,7 +60,7 @@ def fetch():
 	
 
 	posts = sorted(posts, key=lambda x: x['date'], reverse = True);
-	curr_date=curr_date-timedelta(days = day);
+	curr_date=curr_date-timedelta(days = day+1);
 	date = [];
 	json_date = {};
 	json_date["year"] = curr_date.year;
