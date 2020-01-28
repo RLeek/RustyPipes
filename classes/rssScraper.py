@@ -56,7 +56,7 @@ class rssScraper(node):
 			print(str(podcast.find('description'))[13:-20]);
 			print("TRYING \n\n\n\n\n\n");
 			json_podcast["title"] = podcast.find('title').text;
-			json_podcast["date"] = (datetime.strptime(podcast.find('pubdate').text[5:16], "%d %b %Y")).strftime('%m/%d/%Y');
+			json_podcast["date"] = (datetime.strptime(podcast.find('pubdate').text[5:16], "%d %b %Y")).strftime('%Y/%m/%d');
 			json_podcast["description"] = str(podcast.find('description'))[13:-20];
 			json_podcast["icon"] = podcast.find('itunes:image')['href'];
 			json_podcast["link"] = podcast.find('enclosure')['url'];
