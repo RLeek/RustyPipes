@@ -22,6 +22,29 @@
 	  100% { transform: rotate(360deg); }
 	}
 
+
+	.cross {
+		position:absolute;
+		top:14px;
+		height:15px;
+		width:15px;
+		background-color:#2f3136;
+  		border-radius: 100%;
+		font-size:15px;
+		color: grey;
+
+	}
+	.cross:hover {
+		background-color:white;
+		color:grey;
+	}
+
+	.cross_text {
+		position:relative;
+		left:3.3px;
+		bottom:1.8px;
+	}
+
 	.centre_mid_text {
 		position:relative;
 		text-align: center;
@@ -304,6 +327,9 @@
 
 	<!--Centre hand bar-->
 	<div class="center" id = "center">
+
+
+		
 	</div>
 
 
@@ -375,6 +401,31 @@
     		size:0,
 
     		fetching:false,
+
+    		delete_feed_request: function(name) {
+    			var request = new XMLHttpRequest();
+				request.open("GET", "/deleteFeed?name="+name
+					+"&code="+requester.code);
+				request.onreadystatechange = function() {
+					if (request.readyState == 4) {
+	
+					}
+				}
+				request.send();
+    		},
+
+    		delete_stream_request: function(name, streamName) {
+    			var request = new XMLHttpRequest();
+				request.open("GET", "/deleteStream?name="+name
+					+"&code="+requester.code +"&streamName=" + streamName);
+				request.onreadystatechange = function() {
+					if (request.readyState == 4) {
+	
+					}
+				}
+				request.send();
+    		},
+
 
     		code_request: function() {
 				var request = new XMLHttpRequest();
@@ -538,15 +589,57 @@
 
 				var newDiv2 = document.createElement("div"); 
 				var newDiv = document.createElement("div"); 
+				var cross_div = document.createElement("div");
+				var cross_text_div = document.createElement("div");
+				var cross_text_text = document.createElement("div");
+				cross_text_text.innerHTML = "&times;"
+				cross_text_div.className = "cross_text";
+				cross_text_div.appendChild(cross_text_text);
+				cross_div.className = "cross";
+				cross_div.style.left = "25px";
+				cross_div.appendChild(cross_text_div);
 				var newContent = document.createTextNode(name); 
 				newDiv.className = "button_text";
 				newDiv.style.left = "70px";
 				newDiv.appendChild(newContent);  
 				newDiv2.className = "button button_margins";
 				newDiv2.style.left = "10px";
+				newDiv2.appendChild(cross_div);
 				newDiv2.appendChild(newDiv);
 				newDiv2.setAttribute("data-name", name);
 				newDiv2.setAttribute("data-loaded", "false");
+
+
+
+				cross_div.addEventListener("click", function() {
+
+					event.stopPropagation();
+
+					feed_list.html_object.removeChild(newDiv2);
+
+
+					var i;
+					for (i = 0; i < persistent_data.storage_values.length; i++) {
+						if (persistent_data.storage_values[i]["name"] == name) {
+							persistent_data.storage_values.splice(i, 1);
+							break;
+						}
+					}
+
+					localStorage.setItem('Data',JSON.stringify(persistent_data.storage_values));
+
+					requester.delete_feed_request(name);
+
+
+
+
+
+
+				});
+
+
+
+
 				newDiv2.addEventListener("click", function() {
 					centre.clear();
 					requester.set();
@@ -559,7 +652,7 @@
 
 
 					if (newDiv2.dataset.loaded == "true") {
-						requester.fetch(name, "true");
+						requester.fetch(name);
 					}
 					//requester.fetch(name);
 
@@ -569,7 +662,9 @@
 					newDiv2.setAttribute("data-loaded", "true");
 
 				});
+
 				return newDiv2;
+
 			}
     	};
 
@@ -697,11 +792,6 @@
 
 			appender: function(name, type, url) {
 
-
-
-
-
-				
 				stream = {
 					"name": name,
 					"type": type,
@@ -721,7 +811,7 @@
 
 
 				/*
-				var story = {};
+				var story = {};	
 				story[name] = url;
 				var i;
 				for (i = 0; i < storage_values.length; i++) {					
@@ -741,8 +831,19 @@
 
 
 			create_object: function (name, url) {
+
 				var newDiv2 = document.createElement("div"); 
 				var newDiv = document.createElement("div"); 
+				var cross_div = document.createElement("div");
+				var cross_text_div = document.createElement("div");
+				var cross_text_text = document.createElement("div");
+				cross_text_text.innerHTML = "&times;"
+				cross_text_div.className = "cross_text";
+				cross_text_div.appendChild(cross_text_text);
+				cross_div.className = "cross";
+				cross_div.style.left = "25px";
+				cross_div.appendChild(cross_text_div);
+
 				var newContent = document.createTextNode(name); 
 				newDiv.className = "button_text";
 				newDiv.style.left = "70px";
@@ -750,6 +851,42 @@
 				newDiv2.className = "button button_margins";
 				newDiv2.style.left = "10px";
 				newDiv2.appendChild(newDiv);
+				newDiv2.appendChild(cross_div);
+
+
+
+
+				cross_div.addEventListener("click", function() {
+
+					event.stopPropagation();
+
+					stream_list.html_object.removeChild(newDiv2);
+
+					alert(JSON.stringify(persistent_data.storage_values));
+
+
+					var i;
+					for (i = 0; i < persistent_data.storage_values.length; i++) {
+						if (persistent_data.storage_values[i]["name"] == feed_list.curr.dataset.name) {
+							alert("DID THIS WROKS");
+							var i2;
+							alert(persistent_data.storage_values[i]["streams"].length);
+							for (i2 = 0; i2 < persistent_data.storage_values[i]["streams"].length; i2++) {
+								alert(persistent_data.storage_values[i]["streams"][i2]["name"]);
+								if (persistent_data.storage_values[i]["streams"][i2]["name"] == name) {
+									persistent_data.storage_values[i]["streams"].splice(i2, 1);
+								}
+							}
+						}
+					}
+
+					alert(JSON.stringify(persistent_data.storage_values));
+
+					localStorage.setItem('Data',JSON.stringify(persistent_data.storage_values));
+					requester.delete_stream_request(feed_list.curr.dataset.name, name);
+				});
+
+
 				newDiv2.setAttribute("data-name", name);
 				newDiv2.setAttribute("data-url", url);
 				return newDiv2;

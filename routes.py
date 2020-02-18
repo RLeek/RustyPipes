@@ -24,10 +24,6 @@ def index_page():
 	return render_template('index.html');
 
 
-#getStreams Removed (This is stored locally)
-
-#createFeed Removed (This is just a variable in the table)
-
 #Can be considered fixed I think?
 @app.route('/createStream', methods = ['GET'])
 def createStream():
@@ -82,7 +78,32 @@ def unload():
 	infodb =  database();
 	code = request.get_data().decode('utf-8');
 	codeManager.remove_code(code);
-	infodb.deleteFeed(code);
+	infodb.deleteFeeds(code);
 	infodb.close();
 	return "Ok";
+
+
+@app.route('/deleteFeed', methods = ['GET'])
+def deleteFeed():
+	infodb = database();
+	name = request.args.get("name");
+	code = request.args.get("code");
+	infodb.deleteFeed(code, name);
+	return "OK"
+
+
+@app.route('/deleteStream', methods = ['GET'])
+def deleteStream():
+	infodb = database();
+	name = request.args.get("name");
+	code = request.args.get("code");
+	streamName = request.args.get("streamName");
+	infodb.deleteStream( name, code, streamName);
+	return "OK"
+
+
+
+
+
+
 	

@@ -21,12 +21,20 @@ class database():
 		rows = self._cursor.fetchall();
 		return rows;
 
-	def deleteStream(self, id):
-		self._cursor.execute("DELETE FROM feedManager WHERE id ={}".format(id));
+	def deleteStream(self, name, code, streamName):
+		keyname = name + str(code);
+		keystreamname = streamName + str(code);
+		self._cursor.execute("DELETE FROM feedManager WHERE feedname = ? AND streamname = ?",(keyname, keystreamname));
 		self._conn.commit();
 
-	def deleteFeed(self, code):
+	def deleteFeeds(self, code):
 		self._cursor.execute("DELETE FROM feeedManager WHERE feedname LIKE '%{}'".format(code));
+		self._conn.commit();
+
+
+	def deleteFeed(self, code, name):
+		keyname = name + str(code);
+		self._cursor.execute("DELETE FROM feeedManager WHERE feedname = {}".format(keyname));
 		self._conn.commit();
 
 
