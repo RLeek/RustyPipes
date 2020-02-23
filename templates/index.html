@@ -224,6 +224,15 @@
 		bottom:15px;
 	}
 
+	.error_message {
+		position:relative;
+		color:red;
+		top:10px;
+		font-family: 'Lato', sans-serif;
+		font-size:12px;
+		text-align:center;
+	}
+
 	.centre_enclosure {
 		margin-left:20px;
 		margin-right:20px;
@@ -311,6 +320,14 @@
 				<div class = "create_headings"> Name: </div>
 				<input type="input" class = "create_textforms" id = "create_feed_name" placeholder="Please enter a name" maxlength="25">
   				<button type="button" class = "create_submit" id = "create_feed"> Create feed</button>
+
+
+
+
+
+
+
+
 			</form>
 		</div>
 		<!--Buttont hat unhides crating form-->
@@ -351,6 +368,11 @@
 					RSS podcast
 				</div>
 			</div>
+			<div class = "button button_margins" id = "Artstation_node" style="left:10px">
+				<div class = "button_text" style="left:70px;">
+					Artstation
+				</div>
+			</div>
 		</div>
 		<div class = "scrolling_sidecontent hidden" id = "stream_list_form" style="right:0px;">
 			<form>
@@ -383,13 +405,6 @@
 
 		};
 
-
-
-
-
-
-
-    	//Sends requests
     	var requester = {
     		day: 10,
     		month: 10,
@@ -499,7 +514,6 @@
 				}
 				var request = new XMLHttpRequest();
 				request.open("GET", "/fetch?name=" + name+requester.code+"&day="+this.day+"&month="+this.month+"&year="+this.year);
-
 				request.onreadystatechange = function() {
 					if (request.readyState == 4) {
 						if (feed_list.curr.dataset.name == name) {
@@ -534,15 +548,16 @@
 			}
     	};
 
-
-
-		//Deals with feed form
     	var feed_create_initiater = {
     		html_object: document.getElementById("new_feed"),
     		curr_action: null,
     		start: function(feed_create_form) {
 				setTimeout(function(){
 				   	feed_create_form.classList.toggle("unhidden");
+			  		if (feed_create_completer.error_message == true) {
+			  			feed_create_form.removeChild(feed_create_form.lastChild);
+			  			feed_create_completer.error_message = false;
+			  		}
 				}, 0);
 				curr_action = this.close;
 	    	},
@@ -551,6 +566,7 @@
 				   	feed_create_form.classList.toggle("unhidden");
 				}, 0);
 		  		curr_action = this.start;
+		  		
     		},
     		action: function(feed_create_form) {
     			this.curr_action(feed_create_form);
@@ -560,9 +576,34 @@
     		}
     	};
 
-    	//Creates the associated feed object
     	var feed_create_completer = {
     		html_object: document.getElementById("create_feed"),
+    		error_message: false,
+    		check_valid: function() {
+
+				if (left_side_bar.feed_create_form.name.value == "") {
+					return false;
+				}
+
+
+				var i;
+				for (i = 0; i < persistent_data.storage_values.length; i++) {
+					if (persistent_data.storage_values[i]["name"] == left_side_bar.feed_create_form.name.value) {
+						return false;
+					}
+				}
+
+    		},
+    		fail_state:function () {
+    			if (feed_create_completer.error_message == false) {
+	    			var div = document.createElement("div");
+	    			div.className = "error_message";
+	    			div.innerHTML = "Name chosen is invalid or already in use";
+	    			feed_create_form.html_object.appendChild(div);
+	    			feed_create_completer.error_message = true;
+	    		}
+
+    		},
     		action: function(form_create_form, feed) {
 				var feed_obj = this.create_object(form_create_form.name.value);
 				feed.appendChild(feed_obj);
@@ -574,8 +615,6 @@
 				feed.appendChild(feed_obj);
 			},
 			appender: function(name) {
-
-
 				feed = {
 					"name": name,
 					"streams":[]
@@ -586,7 +625,6 @@
 			},
 
 			create_object: function (name) {
-
 				var newDiv2 = document.createElement("div"); 
 				var newDiv = document.createElement("div"); 
 				var cross_div = document.createElement("div");
@@ -608,16 +646,9 @@
 				newDiv2.appendChild(newDiv);
 				newDiv2.setAttribute("data-name", name);
 				newDiv2.setAttribute("data-loaded", "false");
-
-
-
 				cross_div.addEventListener("click", function() {
-
 					event.stopPropagation();
-
 					feed_list.html_object.removeChild(newDiv2);
-
-
 					var i;
 					for (i = 0; i < persistent_data.storage_values.length; i++) {
 						if (persistent_data.storage_values[i]["name"] == name) {
@@ -627,47 +658,23 @@
 					}
 
 					localStorage.setItem('Data',JSON.stringify(persistent_data.storage_values));
-
 					requester.delete_feed_request(name);
-
-
-
-
-
-
 				});
-
-
-
-
 				newDiv2.addEventListener("click", function() {
 					centre.clear();
 					requester.set();
 					feed_list.selected(newDiv2);
-
-
 					stream_list.clear();
-
 					requester.fetch_streams(name, newDiv2.dataset.loaded);
-
-
 					if (newDiv2.dataset.loaded == "true") {
 						requester.fetch(name, "true");
 					}
-					//requester.fetch(name);
-
-
-
-
 					newDiv2.setAttribute("data-loaded", "true");
 
 				});
-
 				return newDiv2;
-
 			}
     	};
-
     	var feed_create_form = {
     		html_object: document.getElementById("feed_create"),
     		name: document.getElementById("create_feed_name"),
@@ -675,7 +682,6 @@
     			this.name = document.getElementById("create_feed_name");
     		}
     	};
-
     	var feed_list = {
     		html_object: document.getElementById("feed_list"),
     		curr: null,
@@ -689,7 +695,6 @@
     			this.curr = curr_div;
     		}
     	};
-
     	var left_side_bar = {
     		feed_create_initiater: feed_create_initiater,
     		feed_create_completer: feed_create_completer,
@@ -702,17 +707,20 @@
     			});
     			this.feed_create_completer.html_object.addEventListener("click", function() {
     				left_side_bar.feed_create_form.refresh();
-    				left_side_bar.feed_create_completer.action(left_side_bar.feed_create_form, left_side_bar.feed_list.html_object);
-    				left_side_bar.feed_create_initiater.action(left_side_bar.feed_create_form.html_object);
+
+    				if (left_side_bar.feed_create_completer.check_valid() != false) {
+	    				left_side_bar.feed_create_completer.action(left_side_bar.feed_create_form, left_side_bar.feed_list.html_object);
+	    				left_side_bar.feed_create_initiater.action(left_side_bar.feed_create_form.html_object);
+	    			} else {
+	  					feed_create_completer.fail_state();
+
+
+
+	    			}
     			});
     		}
     	};
-
-
     	left_side_bar.intitialize();
-
-
-   
     	var stream_create_initiater = {
     		html_object: document.getElementById("stream_create"),
     		curr_action: null,
@@ -732,6 +740,10 @@
 		  		setTimeout(function(){
 				   	stream_create_form.classList.toggle("unhidden");
 				   	stream_choose_form.classList.toggle("unhidden");
+					if (stream_create_stepper.error_message == true) {
+			  			stream_create_stepper.html_object_page2.html_object.removeChild(stream_create_stepper.html_object_page2.html_object.lastChild);
+			  			stream_create_stepper.error_message = false;
+			  		}
 				}, 0);
 		  		this.curr_action = this.start;
     		},
@@ -749,8 +761,6 @@
     			this.curr_action = this.start;
     		}
     	};
-
-
    		var stream_create_form = {
     		html_object: document.getElementById("stream_list_form"),
     		name: document.getElementById("create_stream_name"),
@@ -760,15 +770,19 @@
     			this.url = document.getElementById("create_stream_url");
     		}
     	};
-
     	var stream_create_stepper = {
     		html_object_page1: document.getElementById("stream_list_create"),
     		html_object_page2: stream_create_form,
     		rsspodcast_node: document.getElementById("rsspodcast_node"),
+			Artstation_node: document.getElementById("Artstation_node"),
     		curr_feed: null,
+			error_message: false,
     		initialize: function() {
     			this.rsspodcast_node.addEventListener("click", function() {
     				stream_create_stepper.select("rss_podcast");
+    			});
+    			this.Artstation_node.addEventListener("click", function() {
+    				stream_create_stepper.select("artstation");
     			});
     		},
     		select: function(feed) {
@@ -777,7 +791,6 @@
     			this.curr_feed = feed;
     		}
     	};
-
     	var stream_create_completer = {
     		html_object: document.getElementById("create_stream"),
     		action: function(stream_create_form, stream) {
@@ -789,7 +802,36 @@
 				stream_create_form.url.value = "";
 
 			},
+    		check_valid: function() {
+				if (stream_create_stepper.html_object_page2.name.value == "") {
+					return false;
+				}
+				var i;
+				for (i = 0; i < persistent_data.storage_values.length; i++) {
+					if (persistent_data.storage_values[i]["name"] == feed_list.curr.dataset.name) {
 
+						var i2;
+						for (i2 = 0; i2 < persistent_data.storage_values[i]["streams"].length; i2++) {
+							if (persistent_data.storage_values[i]["streams"][i2]["name"] == stream_create_stepper.html_object_page2.name.value) {
+								return false;
+							}
+						}
+					}
+					
+				}
+
+    		},
+    		fail_state:function () {
+    			//add fail text then remove it when closed
+    			if (stream_create_stepper.error_message == false) {
+	    			var div = document.createElement("div");
+	    			div.className = "error_message";
+	    			div.innerHTML = "Name chosen is invalid or already in use";
+	    			stream_create_stepper.html_object_page2.html_object.appendChild(div);
+	    			stream_create_stepper.error_message = true;
+	    		}
+
+    		},
 			appender: function(name, type, url) {
 
 				stream = {
@@ -806,32 +848,9 @@
 					}
 				}				
 				localStorage.setItem('Data',JSON.stringify(persistent_data.storage_values));
-
-				
-
-
-				/*
-				var story = {};	
-				story[name] = url;
-				var i;
-				for (i = 0; i < storage_values.length; i++) {					
-					if (Object.keys(storage_values[i])[0] == feed_list.curr.dataset.name) {
-						storage_values[i][feed_list.curr.dataset.name].push(story);
-					}
-				}				
-				localStorage.setItem('Data',JSON.stringify(storage_values));
-				*/
-
-
-
-
-
-
 			},
 
-
 			create_object: function (name, url) {
-
 				var newDiv2 = document.createElement("div"); 
 				var newDiv = document.createElement("div"); 
 				var cross_div = document.createElement("div");
@@ -852,18 +871,9 @@
 				newDiv2.style.left = "10px";
 				newDiv2.appendChild(newDiv);
 				newDiv2.appendChild(cross_div);
-
-
-
-
 				cross_div.addEventListener("click", function() {
-
 					event.stopPropagation();
-
 					stream_list.html_object.removeChild(newDiv2);
-
-
-
 					var i;
 					for (i = 0; i < persistent_data.storage_values.length; i++) {
 						if (persistent_data.storage_values[i]["name"] == feed_list.curr.dataset.name) {
@@ -875,13 +885,9 @@
 							}
 						}
 					}
-
-
 					localStorage.setItem('Data',JSON.stringify(persistent_data.storage_values));
 					requester.delete_stream_request(feed_list.curr.dataset.name, name);
 				});
-
-
 				newDiv2.setAttribute("data-name", name);
 				newDiv2.setAttribute("data-url", url);
 				return newDiv2;
@@ -894,11 +900,8 @@
 
     	};
 
-
-    	//Make this work now;
     	var stream_list = {
     		html_object:document.getElementById("stream_list"),
-    		//Allow for refrsh and cleaning Hence
     		clear: function() {
     			var child = this.html_object.firstChild;
     			while(child) {
@@ -906,7 +909,6 @@
     				child = this.html_object.firstChild;
     			}
     		}
-
     	};
 
 
@@ -923,18 +925,18 @@
     			this.stream_create_initiater.html_object.addEventListener("click", function() {
     				right_side_bar.stream_create_initiater.action(stream_create_stepper.html_object_page1, stream_create_stepper.html_object_page2.html_object);
     			});
-
-
     			this.stream_create_completer.html_object.addEventListener("click", function() {
-    				right_side_bar.stream_create_initiater.action(stream_create_stepper.html_object_page1, stream_create_stepper.html_object_page2.html_object);
-    				right_side_bar.stream_create_completer.action(stream_create_stepper.html_object_page2, stream_list.html_object);
+   					if (stream_create_completer.check_valid() != false) {
+	    				right_side_bar.stream_create_initiater.action(stream_create_stepper.html_object_page1, stream_create_stepper.html_object_page2.html_object);
+	    				right_side_bar.stream_create_completer.action(stream_create_stepper.html_object_page2, stream_list.html_object);
+	    			} else {
+	  					stream_create_completer.fail_state();
+	    			}
     			});
     		}
     	};
 
     	right_side_bar.initialize();
-
-
     	var centre = {
     		html_object: document.getElementById("center"),
     		clear: function() {
@@ -945,16 +947,13 @@
     				child = this.html_object.firstChild;
     			}
     		},
-
     		add: function(date, title, audio, icon, description) {
    				var obj = this.create_sound_object(date, title, audio, icon, description);
     			this.html_object.appendChild(obj);
     		},
-
     		load: function() {
     			this.html_object.appendChild(this.create_load_object());
     		},
-
     		create_load_object: function() {
     			var loader = document.createElement("div");
     			loader.className = "loader";
@@ -968,9 +967,6 @@
 				storage.appendChild(text_div);
 				return storage;
     		},
-
-
-
     		create_sound_object: function(date, title, audio, icon,description) {
     			var descrip = document.createElement("div");
     			descrip.className = "centre_description";
@@ -1018,7 +1014,6 @@
     			
     			return enc;
     		},
-
     		initialize: function() {
     			centre.html_object.addEventListener("scroll",  function() {  
 	    			if (centre.html_object.scrollHeight-centre.html_object.scrollTop-centre.html_object.clientHeight < 1) {
@@ -1032,14 +1027,9 @@
     	}
 
     	centre.initialize();
-
-
 		window.addEventListener("unload", function logData() {
 		  navigator.sendBeacon("/unload", requester.code);
 		});
-
-
-
 
     </script>
 
