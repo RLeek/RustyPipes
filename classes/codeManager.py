@@ -4,32 +4,27 @@ from random import randint
 class codeManager():
     
 	def __init__ (self):
-		self._maintained = [];
+		self._maintained = []
 
 
 	def get_code(self):
-		valid = False;
-		code = 0;
+		valid = False
+		code = 0
 		while(not (valid)):
-			code = randint(1000,9999);
-			collision = False;
+			code = randint(1000,9999)
+			collision = False
 			for i in self._maintained:
 				if (code == i):
-					collision = True;
+					collision = True
 			if (collision == True):
-				valid = False;
+				valid = False
 			else:
-				valid = True;
-		self._maintained.append(str(code));
-		return code;
+				valid = True
+		self._maintained.append(str(code))
+		return code
 
 
 	def remove_code(self, code):
-		print(code);
-		print("\n\n\n\n\n\n");
 		for i in self._maintained:
-			print(i);
-
-
-		self._maintained.remove(code);
+			self._maintained.remove(code)
 

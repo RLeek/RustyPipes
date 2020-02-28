@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+<style>
+	body {
+		overflow: hidden;
+		background-color: #34373d;
+	}
+
+	.loader {
+	  	border: 7px solid #34373d; 
+	  	position:fixed;
+	  	border-top: 7px solid white; 
+	  	border-radius: 60%;
+	  	width: 40px;
+	  	height: 40px;
+	  	animation: spin 0.5s linear infinite;
+	}
+
+	@keyframes spin {
+	  0% { transform: rotate(0deg); }
+	  100% { transform: rotate(360deg); }
+	}
+
+
+	.cross {
+		position:absolute;
+		top:14px;
+		height:15px;
+		width:15px;
+		background-color:#2f3136;
+  		border-radius: 100%;
+		font-size:15px;
+		color: grey;
+
+	}
+	.cross:hover {
+		background-color:white;
+		color:grey;
+	}
+
+	.cross_text {
+		position:relative;
+		left:3.3px;
+		bottom:1.8px;
+	}
+
+	.centre_mid_text {
+		position:relative;
+		text-align: center;
+		top:14vh;
+		font-family:'Lato';
+		color: white;
+		font-size: 17px;
+	}
+
+	#titlebar {
+		top:0px;
+		position:fixed;
+		z-index: 1;
+		width:100vw;
+		height:50px;
+		left:0px;
+		right:0px;
+		background-color: #2f3136;
+		box-shadow: 0 2px 0px #24262c;
+	}
+	#title {
+		position:relative;
+		top:1px;
+		left: 50px;
+		font-size: 35px;
+		color: white;
+		font-family: 'Montserrat', sans-serif;
+	}
+
+	.center {
+		position:relative;
+		top:60px;
+		margin-left: 235px;
+		margin-right: 235px;
+  		overflow-y: scroll;
+  		height: calc(100vh - 60px);
+	}
+
+	.sidebar {
+		position:fixed;
+		top: 0px;
+		bottom:0px;
+		width:235px;
+		background-color: #2f3136;
+	}
+
+	.button {
+		position:relative;
+		width: 215px;
+		height: 45px;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+	.button_margins {
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	.button_text {
+		position: relative;
+		top: 11px;
+		width:150px;
+		font-family: 'Lato', sans-serif;
+		color:grey;
+	}
+	.button_enclosure {
+		width: 185px;
+		height: 60px;
+		bottom: 15px;
+		position:fixed;
+		border-top: 3px solid  #24262c;
+		background-color: #2f3136;
+		transition: all 0.3s;
+	}
+	.button_bottomEnclosure {
+		width: 185px;
+		height: 33px;
+		top: 65px;
+		position:fixed;
+		border-bottom: 3px solid  #24262c;
+		background-color: #2f3136;
+	}
+
+	.button:hover {
+		background-color: #36393f;
+	}
+	.button:hover > .button_text {
+		color:white;
+	}
+
+	.selected {
+		background-color: #36393f;
+	}
+
+	.selected > .button_text {
+		color:white;
+	}
+
+	.scrolling_sidecontent {
+		z-index:2;
+		position: fixed;
+		bottom:80px;
+		width:235px;
+		transition: all 0.3s;
+		background-color: #2f3136;
+		overflow-x:hidden;
+	}
+
+	.create_headings {
+		position: relative;
+		margin-bottom:10px;
+		color:grey;
+		font-family: 'Lato', sans-serif;
+		left:17px;
+	}
+
+	.unselectable {
+		pointer-events: none;
+	}
+
+	.create_textforms {
+		position:relative;
+		width:205px;
+		left:12px;
+		height:33px;
+		font-family: 'Lato', sans-serif;
+		font-size: 15px;
+		border-radius: 5px;
+		color:white;
+		background-color: #40444b;
+		border:0px solid;
+		padding-left:5px;
+	}
+
+	.create_submit {
+		position:relative;
+		margin-top:20px;
+		left:25px;
+		width:185px;
+		height:35px;
+		color: grey;
+		background-color:#2f3136;
+		border:0px solid;
+		border-radius: 20px;
+		font-family: 'Lato', sans-serif;
+		font-size: 15px;
+	}
+
+	.create_submit:hover {
+		background-color: #36393f;
+		color:white;
+	}
+
+
+	.hidden {
+		top:100%;
+	}
+	.unhidden {
+		top:60px;
+	}
+
+
+	.hidden_left {
+		right:-300px;
+	}
+
+	.unhidden_left {
+		right:0px;
+	}
+
+	.hidden_stream {
+		bottom:-60px;
+	}
+
+
+	.unhidden_stream {
+		bottom:15px;
+	}
+
+	.error_message {
+		position:relative;
+		color:red;
+		top:10px;
+		font-family: 'Lato', sans-serif;
+		font-size:12px;
+		text-align:center;
+	}
+
+	.centre_enclosure {
+		margin-left:20px;
+		margin-right:20px;
+		position: relative;
+		color: white;
+		border-bottom: 1px solid grey;
+	}
+
+	.centre_content {
+		position:relative;
+		overflow-wrap: break-word;
+		font-family: 'Lato', sans-serif;
+		color: white;
+		margin-bottom: 10px;
+	}
+
+	.centre_title {
+		overflow-wrap: break-word;
+		max-width:550px;
+		font-family: 'Source Sans Pro', sans-serif;
+		font-size: 30px;
+		color:white;
+	}
+	.centre_date {
+		overflow-wrap: break-word;
+		font-family: 'Lato', sans-serif;
+		top:12px;
+		color:white;
+		padding-bottom: 10px;
+		padding-left: 10px;
+		position:relative;
+		float:right;
+	}
+
+	.centre_audio_content {
+		margin-top:20px;
+		position:relative;
+		width:96%;
+		left:10px;
+		background-color: #f1f3f4;
+
+	}
+
+	audio {
+		display:block;
+		position:relative;
+		left:6%;
+		width:94%;
+		background-color: #f1f3f4;
+	} 
+
+	a {
+		font-family: 'Source Sans Pro', sans-serif;
+		color:#35a8d4;
+	}
+
+	.icon {
+		position:absolute;
+		height:54px;
+	}
+</style>
+
+
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+	<!--Top Bar title-->
+	<div id = "titlebar">
+		<div id = "title">RustyPipes</div> 
+	</div>
+
+	<!--Left hand bar-->
+	<div class = "sidebar" style="left:0px">
+		<!--List of feeds-->
+		<div class = "scrolling_sidecontent" id = "feed_list" style="left:0px; top:60px;" >
+		</div>
+		<!--Creating form, starts off hidden, but can be opened by toggling hidden-->
+		<div class = "scrolling_sidecontent hidden" id = "feed_create" style= "left:0px;">
+			<form>
+				<div class = "create_headings"> Name: </div>
+				<input type="input" class = "create_textforms" id = "create_feed_name" placeholder="Please enter a name" maxlength="25">
+  				<button type="button" class = "create_submit" id = "create_feed"> Create feed</button>
+			</form>
+		</div>
+		<!--Buttont hat unhides crating form-->
+		<div class = "button_enclosure" style = "left:25px"> 
+			<span id = "new_feed">
+				<div class = "button" style="top:15px;right:15px;">
+					<div class = "button_text" style= "left:70px;"> Add new feed </div>
+				</div>
+			</span>
+		</div>
+	</div>
+
+
+
+	<!--Centre hand bar-->
+	<div class="center" id = "center">
+
+
+		
+	</div>
+
+
+
+
+
+
+
+	<!-- Right hand bar-->
+	<div class = "sidebar" style = "right:0px">
+		<div class = "scrolling_sidecontent" id = "stream_list" style="right:0px; top:60px;" >
+			<!-- Contains streams-->
+		</div>
+
+
+		<div class = "scrolling_sidecontent hidden" id = "stream_list_create" style="right:0px;" >
+			<div class = "button button_margins" id = "rsspodcast_node" style="left:10px">
+				<div class = "button_text" style="left:70px;">
+					RSS podcast
+				</div>
+			</div>
+			<div class = "button button_margins" id = "Artstation_node" style="left:10px">
+				<div class = "button_text" style="left:70px;">
+					Artstation
+				</div>
+			</div>
+		</div>
+		<div class = "scrolling_sidecontent hidden" id = "stream_list_form" style="right:0px;">
+			<form>
+				<div class = "create_headings"> Name: </div>
+				<input type="input" class = "create_textforms" id = "create_stream_name" placeholder="Please enter a name" maxlength="25">
+				<div class = "create_headings"> URL: </div>
+				<input type="input" class = "create_textforms" id = "create_stream_url" placeholder="Please enter a url">
+  				<button type="button" class = "create_submit" id = "create_stream"> Create stream</button>
+			</form>
+		</div>
+		<div class = "button_enclosure unselectable" style="right:25px;" id = "stream_create"> 
+			<span id = "new_stream">
+				<div class = "button"  style="top:15px;right:15px;">
+					<div class = "button_text" style= "left:70px;" id = "create_stream"> Add new stream </div>
+				</div>
+			</span>
+		</div>
+	</div>
+</body>
+<script src="{{ url_for('static', filename='storage.js') }}"> </script>
+<script src="{{ url_for('static', filename='serverRequest.js') }}"> </script>
+<script src="{{ url_for('static', filename='feedList.js') }}"> </script>
+<script src="{{ url_for('static', filename='feedCreator.js') }}"> </script>
+<script src="{{ url_for('static', filename='centre.js') }}"></script>
+<script src="{{ url_for('static', filename='streamList.js') }}"></script>
+<script src="{{ url_for('static', filename='streamCreator.js') }}"></script>
+
+
+</html>

@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+<style>
+	body {
+		overflow: hidden;
+		background-color: #34373d;
+	}
+
+	.loader {
+	  	border: 7px solid #34373d; 
+	  	position:fixed;
+	  	border-top: 7px solid white; 
+	  	border-radius: 60%;
+	  	width: 40px;
+	  	height: 40px;
+	  	animation: spin 0.5s linear infinite;
+	}
+
+	@keyframes spin {
+	  0% { transform: rotate(0deg); }
+	  100% { transform: rotate(360deg); }
+	}
+
+
+	.cross {
+		position:absolute;
+		top:14px;
+		height:15px;
+		width:15px;
+		background-color:#2f3136;
+  		border-radius: 100%;
+		font-size:15px;
+		color: grey;
+
+	}
+	.cross:hover {
+		background-color:white;
+		color:grey;
+	}
+
+	.cross_text {
+		position:relative;
+		left:3.3px;
+		bottom:1.8px;
+	}
+
+	.centre_mid_text {
+		position:relative;
+		text-align: center;
+		top:14vh;
+		font-family:'Lato';
+		color: white;
+		font-size: 17px;
+	}
+
+	#titlebar {
+		top:0px;
+		position:fixed;
+		z-index: 1;
+		width:100vw;
+		height:50px;
+		left:0px;
+		right:0px;
+		background-color: #2f3136;
+		box-shadow: 0 2px 0px #24262c;
+	}
+	#title {
+		position:relative;
+		top:1px;
+		left: 50px;
+		font-size: 35px;
+		color: white;
+		font-family: 'Montserrat', sans-serif;
+	}
+
+	.center {
+		position:relative;
+		top:60px;
+		margin-left: 235px;
+		margin-right: 235px;
+  		overflow-y: scroll;
+  		height: calc(100vh - 60px);
+	}
+
+	.sidebar {
+		position:fixed;
+		top: 0px;
+		bottom:0px;
+		width:235px;
+		background-color: #2f3136;
+	}
+
+	.button {
+		position:relative;
+		width: 215px;
+		height: 45px;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+	.button_margins {
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	.button_text {
+		position: relative;
+		top: 11px;
+		width:150px;
+		font-family: 'Lato', sans-serif;
+		color:grey;
+	}
+	.button_enclosure {
+		width: 185px;
+		height: 60px;
+		bottom: 15px;
+		position:fixed;
+		border-top: 3px solid  #24262c;
+		background-color: #2f3136;
+		transition: all 0.3s;
+	}
+	.button_bottomEnclosure {
+		width: 185px;
+		height: 33px;
+		top: 65px;
+		position:fixed;
+		border-bottom: 3px solid  #24262c;
+		background-color: #2f3136;
+	}
+
+	.button:hover {
+		background-color: #36393f;
+	}
+	.button:hover > .button_text {
+		color:white;
+	}
+
+	.selected {
+		background-color: #36393f;
+	}
+
+	.selected > .button_text {
+		color:white;
+	}
+
+	.scrolling_sidecontent {
+		z-index:2;
+		position: fixed;
+		bottom:80px;
+		width:235px;
+		transition: all 0.3s;
+		background-color: #2f3136;
+		overflow-x:hidden;
+	}
+
+	.create_headings {
+		position: relative;
+		margin-bottom:10px;
+		color:grey;
+		font-family: 'Lato', sans-serif;
+		left:17px;
+	}
+
+	.unselectable {
+		pointer-events: none;
+	}
+
+	.create_textforms {
+		position:relative;
+		width:205px;
+		left:12px;
+		height:33px;
+		font-family: 'Lato', sans-serif;
+		font-size: 15px;
+		border-radius: 5px;
+		color:white;
+		background-color: #40444b;
+		border:0px solid;
+		padding-left:5px;
+	}
+
+	.create_submit {
+		position:relative;
+		margin-top:20px;
+		left:25px;
+		width:185px;
+		height:35px;
+		color: grey;
+		background-color:#2f3136;
+		border:0px solid;
+		border-radius: 20px;
+		font-family: 'Lato', sans-serif;
+		font-size: 15px;
+	}
+
+	.create_submit:hover {
+		background-color: #36393f;
+		color:white;
+	}
+
+
+	.hidden {
+		top:100%;
+	}
+	.unhidden {
+		top:60px;
+	}
+
+
+	.hidden_left {
+		right:-300px;
+	}
+
+	.unhidden_left {
+		right:0px;
+	}
+
+	.hidden_stream {
+		bottom:-60px;
+	}
+
+
+	.unhidden_stream {
+		bottom:15px;
+	}
+
+	.error_message {
+		position:relative;
+		color:red;
+		top:10px;
+		font-family: 'Lato', sans-serif;
+		font-size:12px;
+		text-align:center;
+	}
+
+	.centre_enclosure {
+		margin-left:20px;
+		margin-right:20px;
+		position: relative;
+		color: white;
+		border-bottom: 1px solid grey;
+	}
+
+	.centre_content {
+		position:relative;
+		overflow-wrap: break-word;
+		font-family: 'Lato', sans-serif;
+		color: white;
+		margin-bottom: 10px;
+	}
+
+	.centre_title {
+		overflow-wrap: break-word;
+		max-width:550px;
+		font-family: 'Source Sans Pro', sans-serif;
+		font-size: 30px;
+		color:white;
+	}
+	.centre_date {
+		overflow-wrap: break-word;
+		font-family: 'Lato', sans-serif;
+		top:12px;
+		color:white;
+		padding-bottom: 10px;
+		padding-left: 10px;
+		position:relative;
+		float:right;
+	}
+
+	.centre_audio_content {
+		margin-top:20px;
+		position:relative;
+		width:96%;
+		left:10px;
+		background-color: #f1f3f4;
+
+	}
+
+	audio {
+		display:block;
+		position:relative;
+		left:6%;
+		width:94%;
+		background-color: #f1f3f4;
+	} 
+
+	a {
+		font-family: 'Source Sans Pro', sans-serif;
+		color:#35a8d4;
+	}
+
+	.icon {
+		position:absolute;
+		height:54px;
+	}
+</style>
+
+
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+	<!--Top Bar title-->
+	<div id = "titlebar">
+		<div id = "title">RustyPipes</div> 
+	</div>
+
+	<!--Left hand bar-->
+	<div class = "sidebar" style="left:0px">
+		<!--List of feeds-->
+		<div class = "scrolling_sidecontent" id = "feed_list" style="left:0px; top:60px;" >
+		</div>
+		<!--Creating form, starts off hidden, but can be opened by toggling hidden-->
+		<div class = "scrolling_sidecontent hidden" id = "feed_create" style= "left:0px;">
+			<form>
+				<div class = "create_headings"> Name: </div>
+				<input type="input" class = "create_textforms" id = "create_feed_name" placeholder="Please enter a name" maxlength="25">
+  				<button type="button" class = "create_submit" id = "create_feed"> Create feed</button>
+			</form>
+		</div>
+		<!--Buttont hat unhides crating form-->
+		<div class = "button_enclosure" style = "left:25px"> 
+			<span id = "new_feed">
+				<div class = "button" style="top:15px;right:15px;">
+					<div class = "button_text" style= "left:70px;"> Add new feed </div>
+				</div>
+			</span>
+		</div>
+	</div>
+
+
+
+	<!--Centre hand bar-->
+	<div class="center" id = "center">
+
+
+		
+	</div>
+
+
+
+
+
+
+
+	<!-- Right hand bar-->
+	<div class = "sidebar" style = "right:0px">
+		<div class = "scrolling_sidecontent" id = "stream_list" style="right:0px; top:60px;" >
+			<!-- Contains streams-->
+		</div>
+
+
+		<div class = "scrolling_sidecontent hidden" id = "stream_list_create" style="right:0px;" >
+			<div class = "button button_margins" id = "rsspodcast_node" style="left:10px">
+				<div class = "button_text" style="left:70px;">
+					RSS podcast
+				</div>
+			</div>
+			<div class = "button button_margins" id = "Artstation_node" style="left:10px">
+				<div class = "button_text" style="left:70px;">
+					Artstation
+				</div>
+			</div>
+		</div>
+		<div class = "scrolling_sidecontent hidden" id = "stream_list_form" style="right:0px;">
+			<form>
+				<div class = "create_headings"> Name: </div>
+				<input type="input" class = "create_textforms" id = "create_stream_name" placeholder="Please enter a name" maxlength="25">
+				<div class = "create_headings"> URL: </div>
+				<input type="input" class = "create_textforms" id = "create_stream_url" placeholder="Please enter a url">
+  				<button type="button" class = "create_submit" id = "create_stream"> Create stream</button>
+			</form>
+		</div>
+		<div class = "button_enclosure unselectable" style="right:25px;" id = "stream_create"> 
+			<span id = "new_stream">
+				<div class = "button"  style="top:15px;right:15px;">
+					<div class = "button_text" style= "left:70px;" id = "create_stream"> Add new stream </div>
+				</div>
+			</span>
+		</div>
+	</div>
+</body>
+    <script>
+    	
+
+    	var persistent_data = {
+    		storage_values:[]
+    	};
+
+
+		window.onload = function() {
+			requester.code_request();
+
+		};
+
+    	var requester = {
+    		day: 10,
+    		month: 10,
+    		year: 10,
+    		code: 0,
+
+
+    		loaded:0,
+    		size:0,
+
+    		fetching:false,
+
+    		delete_feed_request: function(name) {
+    			var request = new XMLHttpRequest();
+				request.open("GET", "/deleteFeed?name="+name
+					+"&code="+requester.code);
+				request.onreadystatechange = function() {
+					if (request.readyState == 4) {
+	
+					}
+				}
+				request.send();
+    		},
+
+    		delete_stream_request: function(name, streamName) {
+    			var request = new XMLHttpRequest();
+				request.open("GET", "/deleteStream?name="+name
+					+"&code="+requester.code +"&streamName=" + streamName);
+				request.onreadystatechange = function() {
+					if (request.readyState == 4) {
+	
+					}
+				}
+				request.send();
+    		},
+
+
+    		code_request: function() {
+				var request = new XMLHttpRequest();
+				request.open("GET", "/code");
+				request.onreadystatechange = function() {
+					if (request.readyState == 4) {
+						requester.code = request.responseText;
+
+						var data = localStorage.getItem('Data');
+						if (data != null) {
+						 	persistent_data.storage_values = JSON.parse(data);
+
+							var i;
+							for (i = 0; i < persistent_data.storage_values.length; i++) {	
+								feed_create_completer.action2(persistent_data.storage_values[i]["name"], left_side_bar.feed_list.html_object);
+								//feed_create_completer.action2(Object.keys(storage_values[i])[0], left_side_bar.feed_list.html_object);
+							}	
+						}
+
+
+
+					}
+				}
+				request.send();
+    		},
+
+			stream_request: function(parent, name, type, url, refresh) {
+				var request = new XMLHttpRequest();
+				request.open("GET", "/createStream?type="+type
+					+"&url="+url+"&name="+name+"&feed_name="+feed_list.curr.dataset.name+requester.code);
+				request.onreadystatechange = function() {
+					if (request.readyState == 4) {
+						requester.loaded = requester.loaded + 1;
+						if (refresh == "true" && (requester.size == requester.loaded))  {
+							requester.fetch(parent, "true")
+						}
+
+					}
+				}
+				request.send();
+			},
+
+			fetch_streams: function(name, loaded) {
+				this.size = 0;
+				this.loaded = 0;
+				var i;
+				for (i = 0; i < persistent_data.storage_values.length; i++) {	
+
+					if (persistent_data.storage_values[i]["name"] == name) {
+						var i2;
+						size = persistent_data.storage_values[i]["streams"].length;
+						for (i2 = 0; i2 < persistent_data.storage_values[i]["streams"].length; i2++) {
+							var key = persistent_data.storage_values[i]["streams"][i2]["name"];
+							var value = persistent_data.storage_values[i]["streams"][i2]["url"];
+							var type = persistent_data.storage_values[i]["streams"][i2]["type"];
+							this.size = persistent_data.storage_values[i]["streams"].length;
+							stream_create_completer.action1(key, value, stream_list.html_object);
+							if (loaded == "false") {
+								requester.stream_request(name, key, type, value, "true");							
+							}
+						}
+					}
+				}
+			},
+
+
+			fetch: function(name, loaded) {
+				this.fetching = true;
+				if (loaded == "true") {
+					centre.load();
+				}
+				var request = new XMLHttpRequest();
+				request.open("GET", "/fetch?name=" + name+requester.code+"&day="+this.day+"&month="+this.month+"&year="+this.year);
+				request.onreadystatechange = function() {
+					if (request.readyState == 4) {
+						if (feed_list.curr.dataset.name == name) {
+							requester.fetching = false;
+							if (loaded == "true") {
+								centre.clear();
+							}
+
+					  		var requestText = JSON.parse(request.responseText);
+					  		var i = 0;
+					  		while(i < requestText.length-1) {
+					  			centre.add(requestText[i].date, requestText[i].title, requestText[i].link,
+					  				requestText[i].icon,
+					  				requestText[i].description);
+					  			i = i + 1;
+					  		}
+
+					  		requester.year = requestText[i][0].year;
+					  		requester.month = requestText[i][0].month;
+					  		requester.day = requestText[i][0].day;
+
+					  	}
+				  	}
+				}					
+				request.send();
+			},
+			set: function() {
+				var currentTime = new Date();
+				this.day = currentTime.getDate();
+				this.month = currentTime.getMonth() + 1;
+				this.year = currentTime.getFullYear();
+			}
+    	};
+
+    	var feed_create_initiater = {
+    		html_object: document.getElementById("new_feed"),
+    		curr_action: null,
+    		start: function(feed_create_form) {
+				setTimeout(function(){
+				   	feed_create_form.classList.toggle("unhidden");
+			  		if (feed_create_completer.error_message == true) {
+			  			feed_create_form.removeChild(feed_create_form.lastChild);
+			  			feed_create_completer.error_message = false;
+			  		}
+				}, 0);
+				curr_action = this.close;
+	    	},
+    		close: function(feed_create_form) {
+		  		setTimeout(function(){
+				   	feed_create_form.classList.toggle("unhidden");
+				}, 0);
+		  		curr_action = this.start;
+		  		
+    		},
+    		action: function(feed_create_form) {
+    			this.curr_action(feed_create_form);
+    		},
+    		intitialize: function() {
+    			this.curr_action = this.start;
+    		}
+    	};
+
+    	var feed_create_completer = {
+    		html_object: document.getElementById("create_feed"),
+    		error_message: false,
+    		check_valid: function() {
+
+				if (left_side_bar.feed_create_form.name.value == "") {
+					return false;
+				}
+
+
+				var i;
+				for (i = 0; i < persistent_data.storage_values.length; i++) {
+					if (persistent_data.storage_values[i]["name"] == left_side_bar.feed_create_form.name.value) {
+						return false;
+					}
+				}
+
+    		},
+    		fail_state:function () {
+    			if (feed_create_completer.error_message == false) {
+	    			var div = document.createElement("div");
+	    			div.className = "error_message";
+	    			div.innerHTML = "Name chosen is invalid or already in use";
+	    			feed_create_form.html_object.appendChild(div);
+	    			feed_create_completer.error_message = true;
+	    		}
+
+    		},
+    		action: function(form_create_form, feed) {
+				var feed_obj = this.create_object(form_create_form.name.value);
+				feed.appendChild(feed_obj);
+				this.appender(form_create_form.name.value);
+				form_create_form.name.value = "";		
+			},
+			action2: function(name, feed) {
+				var feed_obj = this.create_object(name);
+				feed.appendChild(feed_obj);
+			},
+			appender: function(name) {
+				feed = {
+					"name": name,
+					"streams":[]
+				};
+				persistent_data.storage_values.push(feed);
+				localStorage.setItem('Data',JSON.stringify(persistent_data.storage_values));
+
+			},
+
+			create_object: function (name) {
+				var newDiv2 = document.createElement("div"); 
+				var newDiv = document.createElement("div"); 
+				var cross_div = document.createElement("div");
+				var cross_text_div = document.createElement("div");
+				var cross_text_text = document.createElement("div");
+				cross_text_text.innerHTML = "&times;"
+				cross_text_div.className = "cross_text";
+				cross_text_div.appendChild(cross_text_text);
+				cross_div.className = "cross";
+				cross_div.style.left = "25px";
+				cross_div.appendChild(cross_text_div);
+				var newContent = document.createTextNode(name); 
+				newDiv.className = "button_text";
+				newDiv.style.left = "70px";
+				newDiv.appendChild(newContent);  
+				newDiv2.className = "button button_margins";
+				newDiv2.style.left = "10px";
+				newDiv2.appendChild(cross_div);
+				newDiv2.appendChild(newDiv);
+				newDiv2.setAttribute("data-name", name);
+				newDiv2.setAttribute("data-loaded", "false");
+				cross_div.addEventListener("click", function() {
+					event.stopPropagation();
+					feed_list.html_object.removeChild(newDiv2);
+					var i;
+					for (i = 0; i < persistent_data.storage_values.length; i++) {
+						if (persistent_data.storage_values[i]["name"] == name) {
+							persistent_data.storage_values.splice(i, 1);
+							break;
+						}
+					}
+
+					localStorage.setItem('Data',JSON.stringify(persistent_data.storage_values));
+					requester.delete_feed_request(name);
+				});
+				newDiv2.addEventListener("click", function() {
+					centre.clear();
+					requester.set();
+					feed_list.selected(newDiv2);
+					stream_list.clear();
+					requester.fetch_streams(name, newDiv2.dataset.loaded);
+					if (newDiv2.dataset.loaded == "true") {
+						requester.fetch(name, "true");
+					}
+					newDiv2.setAttribute("data-loaded", "true");
+
+				});
+				return newDiv2;
+			}
+    	};
+    	var feed_create_form = {
+    		html_object: document.getElementById("feed_create"),
+    		name: document.getElementById("create_feed_name"),
+    		refresh: function() {
+    			this.name = document.getElementById("create_feed_name");
+    		}
+    	};
+    	var feed_list = {
+    		html_object: document.getElementById("feed_list"),
+    		curr: null,
+    		selected: function(curr_div) {
+    			if (this.curr != null) {
+    				this.curr.classList.toggle("selected");
+    			} else {
+    				stream_create_initiater.html_object.classList.toggle("unselectable");
+    			}
+    			curr_div.classList.toggle("selected");
+    			this.curr = curr_div;
+    		}
+    	};
+    	var left_side_bar = {
+    		feed_create_initiater: feed_create_initiater,
+    		feed_create_completer: feed_create_completer,
+    		feed_create_form: feed_create_form,
+    		feed_list: feed_list,
+    		intitialize: function() {
+    			this.feed_create_initiater.intitialize();
+    			this.feed_create_initiater.html_object.addEventListener("click", function() {
+    				left_side_bar.feed_create_initiater.action(left_side_bar.feed_create_form.html_object);
+    			});
+    			this.feed_create_completer.html_object.addEventListener("click", function() {
+    				left_side_bar.feed_create_form.refresh();
+
+    				if (left_side_bar.feed_create_completer.check_valid() != false) {
+	    				left_side_bar.feed_create_completer.action(left_side_bar.feed_create_form, left_side_bar.feed_list.html_object);
+	    				left_side_bar.feed_create_initiater.action(left_side_bar.feed_create_form.html_object);
+	    			} else {
+	  					feed_create_completer.fail_state();
+
+
+
+	    			}
+    			});
+    		}
+    	};
+    	left_side_bar.intitialize();
+    	var stream_create_initiater = {
+    		html_object: document.getElementById("stream_create"),
+    		curr_action: null,
+    		start: function(stream_create_form, stream_choose_form) {
+				setTimeout(function(){
+				   	stream_create_form.classList.toggle("unhidden");
+				}, 0);
+				this.curr_action = this.close_1;
+	    	},
+    		close_1: function(stream_create_form, stream_choose_form) {
+		  		setTimeout(function(){
+				   	stream_create_form.classList.toggle("unhidden");
+				}, 0);
+		  		this.curr_action = this.start;
+    		},
+    		close_2: function(stream_create_form, stream_choose_form) {
+		  		setTimeout(function(){
+				   	stream_create_form.classList.toggle("unhidden");
+				   	stream_choose_form.classList.toggle("unhidden");
+					if (stream_create_stepper.error_message == true) {
+			  			stream_create_stepper.html_object_page2.html_object.removeChild(stream_create_stepper.html_object_page2.html_object.lastChild);
+			  			stream_create_stepper.error_message = false;
+			  		}
+				}, 0);
+		  		this.curr_action = this.start;
+    		},
+    		close_switch: function() {
+    			if (this.curr_action == this.close_1) {
+    				this.curr_action = this.close_2;
+    			} else if (this.curr_action == this.close_2) {
+    				this.curr_action = this.close_1;
+    			}
+    		},
+    		action: function(stream_create_form, stream_choose_form) {
+    			this.curr_action(stream_create_form, stream_choose_form);
+    		},
+    		intitialize: function() {
+    			this.curr_action = this.start;
+    		}
+    	};
+   		var stream_create_form = {
+    		html_object: document.getElementById("stream_list_form"),
+    		name: document.getElementById("create_stream_name"),
+    		url: document.getElementById("create_stream_url"),
+    		refresh: function() {
+    			this.name = document.getElementById("create_stream_name");
+    			this.url = document.getElementById("create_stream_url");
+    		}
+    	};
+    	var stream_create_stepper = {
+    		html_object_page1: document.getElementById("stream_list_create"),
+    		html_object_page2: stream_create_form,
+    		rsspodcast_node: document.getElementById("rsspodcast_node"),
+			Artstation_node: document.getElementById("Artstation_node"),
+    		curr_feed: null,
+			error_message: false,
+    		initialize: function() {
+    			this.rsspodcast_node.addEventListener("click", function() {
+    				stream_create_stepper.select("rss_podcast");
+    			});
+    			this.Artstation_node.addEventListener("click", function() {
+    				stream_create_stepper.select("artstation");
+    			});
+    		},
+    		select: function(feed) {
+    			this.html_object_page2.html_object.classList.toggle("unhidden");
+    			stream_create_initiater.close_switch();
+    			this.curr_feed = feed;
+    		}
+    	};
+    	var stream_create_completer = {
+    		html_object: document.getElementById("create_stream"),
+    		action: function(stream_create_form, stream) {
+				var stream_obj = this.create_object(stream_create_form.name.value, stream_create_form.url.value);
+				stream.appendChild(stream_obj);
+				requester.stream_request("", stream_create_form.name.value, stream_create_stepper.curr_feed ,stream_create_form.url.value, "false");
+				this.appender(stream_create_form.name.value, stream_create_stepper.curr_feed, stream_create_form.url.value);
+				stream_create_form.name.value = "";		
+				stream_create_form.url.value = "";
+
+			},
+    		check_valid: function() {
+				if (stream_create_stepper.html_object_page2.name.value == "") {
+					return false;
+				}
+				var i;
+				for (i = 0; i < persistent_data.storage_values.length; i++) {
+					if (persistent_data.storage_values[i]["name"] == feed_list.curr.dataset.name) {
+
+						var i2;
+						for (i2 = 0; i2 < persistent_data.storage_values[i]["streams"].length; i2++) {
+							if (persistent_data.storage_values[i]["streams"][i2]["name"] == stream_create_stepper.html_object_page2.name.value) {
+								return false;
+							}
+						}
+					}
+					
+				}
+
+    		},
+    		fail_state:function () {
+    			//add fail text then remove it when closed
+    			if (stream_create_stepper.error_message == false) {
+	    			var div = document.createElement("div");
+	    			div.className = "error_message";
+	    			div.innerHTML = "Name chosen is invalid or already in use";
+	    			stream_create_stepper.html_object_page2.html_object.appendChild(div);
+	    			stream_create_stepper.error_message = true;
+	    		}
+
+    		},
+			appender: function(name, type, url) {
+
+				stream = {
+					"name": name,
+					"type": type,
+					"url": url
+				};
+
+
+				var i;
+				for (i = 0; i < persistent_data.storage_values.length; i++) {					
+					if (persistent_data.storage_values[i]["name"] == feed_list.curr.dataset.name) {
+						persistent_data.storage_values[i]["streams"].push(stream);
+					}
+				}				
+				localStorage.setItem('Data',JSON.stringify(persistent_data.storage_values));
+			},
+
+			create_object: function (name, url) {
+				var newDiv2 = document.createElement("div"); 
+				var newDiv = document.createElement("div"); 
+				var cross_div = document.createElement("div");
+				var cross_text_div = document.createElement("div");
+				var cross_text_text = document.createElement("div");
+				cross_text_text.innerHTML = "&times;"
+				cross_text_div.className = "cross_text";
+				cross_text_div.appendChild(cross_text_text);
+				cross_div.className = "cross";
+				cross_div.style.left = "25px";
+				cross_div.appendChild(cross_text_div);
+
+				var newContent = document.createTextNode(name); 
+				newDiv.className = "button_text";
+				newDiv.style.left = "70px";
+				newDiv.appendChild(newContent);  
+				newDiv2.className = "button button_margins";
+				newDiv2.style.left = "10px";
+				newDiv2.appendChild(newDiv);
+				newDiv2.appendChild(cross_div);
+				cross_div.addEventListener("click", function() {
+					event.stopPropagation();
+					stream_list.html_object.removeChild(newDiv2);
+					var i;
+					for (i = 0; i < persistent_data.storage_values.length; i++) {
+						if (persistent_data.storage_values[i]["name"] == feed_list.curr.dataset.name) {
+							var i2;
+							for (i2 = 0; i2 < persistent_data.storage_values[i]["streams"].length; i2++) {
+								if (persistent_data.storage_values[i]["streams"][i2]["name"] == name) {
+									persistent_data.storage_values[i]["streams"].splice(i2, 1);
+								}
+							}
+						}
+					}
+					localStorage.setItem('Data',JSON.stringify(persistent_data.storage_values));
+					requester.delete_stream_request(feed_list.curr.dataset.name, name);
+				});
+				newDiv2.setAttribute("data-name", name);
+				newDiv2.setAttribute("data-url", url);
+				return newDiv2;
+			},
+
+			action1: function(name, url, stream) {
+				var stream_obj = this.create_object(name, url);
+				stream.appendChild(stream_obj);
+			}
+
+    	};
+
+    	var stream_list = {
+    		html_object:document.getElementById("stream_list"),
+    		clear: function() {
+    			var child = this.html_object.firstChild;
+    			while(child) {
+    				this.html_object.removeChild(child);
+    				child = this.html_object.firstChild;
+    			}
+    		}
+    	};
+
+
+
+    	var right_side_bar = {
+			stream_create_initiater: stream_create_initiater,
+    		html_object_page1: document.getElementById("stream_list_create"),
+    		stream_create_stepper: stream_create_stepper,
+    		stream_create_completer: stream_create_completer,
+    		stream_list: stream_list,
+    		initialize: function() {
+    			this.stream_create_stepper.initialize();
+    			this.stream_create_initiater.intitialize();
+    			this.stream_create_initiater.html_object.addEventListener("click", function() {
+    				right_side_bar.stream_create_initiater.action(stream_create_stepper.html_object_page1, stream_create_stepper.html_object_page2.html_object);
+    			});
+    			this.stream_create_completer.html_object.addEventListener("click", function() {
+   					if (stream_create_completer.check_valid() != false) {
+	    				right_side_bar.stream_create_initiater.action(stream_create_stepper.html_object_page1, stream_create_stepper.html_object_page2.html_object);
+	    				right_side_bar.stream_create_completer.action(stream_create_stepper.html_object_page2, stream_list.html_object);
+	    			} else {
+	  					stream_create_completer.fail_state();
+	    			}
+    			});
+    		}
+    	};
+
+    	right_side_bar.initialize();
+    	var centre = {
+    		html_object: document.getElementById("center"),
+    		clear: function() {
+    			requester.date = null;
+    			var child = this.html_object.firstChild;
+    			while(child) {
+    				this.html_object.removeChild(child);
+    				child = this.html_object.firstChild;
+    			}
+    		},
+    		add: function(date, title, audio, icon, description) {
+   				var obj = this.create_sound_object(date, title, audio, icon, description);
+    			this.html_object.appendChild(obj);
+    		},
+    		load: function() {
+    			this.html_object.appendChild(this.create_load_object());
+    		},
+    		create_load_object: function() {
+    			var loader = document.createElement("div");
+    			loader.className = "loader";
+				loader.style.right = "50vw";
+				loader.style.top = "12vh";
+				var text_div = document.createElement("div");
+				text_div.className = "centre_mid_text";
+				text_div.innerHTML = "Loading...&ensp;&ensp;&ensp;&ensp;&ensp;"
+				var storage = document.createElement('div');
+				storage.appendChild(loader);
+				storage.appendChild(text_div);
+				return storage;
+    		},
+    		create_sound_object: function(date, title, audio, icon,description) {
+    			var descrip = document.createElement("div");
+    			descrip.className = "centre_description";
+    			descrip.innerHTML = description;
+
+
+    			var audA = document.createElement("div");
+    			audA.className = "centre_audio_content";
+
+    			var aud = document.createElement("audio");
+    			aud.controls = "controls";
+
+    			var img = document.createElement("img");
+    			img.src = icon;
+    			img.className = "icon";
+    			var sour1 = document.createElement("source");
+    			sour1.src = audio;
+    			sour1.type = 'audio/ogg';
+    			var sour2 = document.createElement("source");
+    			sour2.src = audio;
+    			sour2.type ='audio/mpeg';
+    			aud.appendChild(sour1);
+    			aud.appendChild(sour2);
+    			audA.appendChild(img);
+    			audA.appendChild(aud);
+
+    			var tite = document.createElement("div");
+    			tite.className = "centre_title";
+    			tite.appendChild(document.createTextNode(title));
+
+    			var dae = document.createElement("div");
+    			dae.className = "centre_date";
+    			dae.appendChild(document.createTextNode(date));
+
+    			var content = document.createElement("div");
+    			content.className = "centre_content";
+    			content.appendChild(dae);
+    			content.appendChild(tite);
+    			content.appendChild(audA);
+    			content.appendChild(descrip);
+
+    			var enc = document.createElement("div");
+    			enc.className = "centre_enclosure";
+    			enc.appendChild(content);
+    			
+    			return enc;
+    		},
+    		initialize: function() {
+    			centre.html_object.addEventListener("scroll",  function() {  
+	    			if (centre.html_object.scrollHeight-centre.html_object.scrollTop-centre.html_object.clientHeight < 1) {
+	    				if (requester.fetching == false) {
+
+	    					requester.fetch(feed_list.curr.dataset.name, "false");
+	    				}
+	    			}
+    			});
+    		}
+    	}
+
+    	centre.initialize();
+		window.addEventListener("unload", function logData() {
+		  navigator.sendBeacon("/unload", requester.code);
+		});
+
+    </script>
+
+
+</html>

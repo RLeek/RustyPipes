@@ -9,15 +9,15 @@ from datetime import datetime
 class feed():
 	
 	def __init__(self, streamList):
-		self._streamList = streamList;
+		self._streamList = streamList
 
 
 
 	def fetch(self, startDate, endDate):
-		jsonObjects = [];
+		jsonObjects = []
 		for i in self._streamList:
-			jsonObjects.extend(i.fetch(startDate, endDate));
-		return jsonObjects;
+			jsonObjects.extend(i.fetch(startDate, endDate))
+		return jsonObjects
 
 
 

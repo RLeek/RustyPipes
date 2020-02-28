@@ -3,9 +3,9 @@ from abc import ABC
 class node(ABC):
     
 	def update():
-		pass;
+		pass
 
 	def fetch():
-		pass;
+		pass
 
     
