@@ -151,8 +151,10 @@ centre = {
         centre.htmlObject.addEventListener("scroll",  function() {  
             if (centre.htmlObject.scrollHeight-centre.htmlObject.scrollTop-centre.htmlObject.clientHeight < 1) {
                 if (serverRequest.currFetching == false) {
+                    serverRequest.currFetching = true;
                     centre.update();
                 }
+
             }
         });
     }
