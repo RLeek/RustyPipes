@@ -14,6 +14,10 @@ class ArtStationScraper(node):
         if (project == "unfinished"):
             user = url[27:]
             user_link = "https://www.artstation.com/users/"+ user+"/projects.json?page="
+
+
+
+            
             json_content = []
             page = 1
             url = Request(user_link + str(page), headers={'User-Agent': 'Mozilla/5.0'})
@@ -21,11 +25,17 @@ class ArtStationScraper(node):
             content = data["data"]
             while(len(content) != 0):
                 json_content = json_content + content
+                page = page+1
                 url = Request(user_link + str(page), headers={'User-Agent': 'Mozilla/5.0'})
                 data = json.loads(urlopen(url).read())
                 content = data["data"]
-                page = page+1
                 time.sleep(1)
+
+
+
+
+
+
             self._project = (json_content)
         else:
             self._project = json.loads(project)

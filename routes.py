@@ -50,21 +50,32 @@ def fetch():
 	streamList = []
 	if (len(retrievedData) == 0):
 		return json.dumps([])
-
 	for i in retrievedData:
 		if (i[1] == "rss_podcast"):
 			streamList.append(rssScraper(i[0], i[2], i[3]))
 		elif (i[1] == "artstation"):
 			streamList.append(ArtStationScraper(i[0], i[2], i[3]))
+
 	requestedFeed = feed(streamList)
 	curr_date = datetime(int(request.args.get("year")), int(request.args.get("month")), int(request.args.get("day")))
 	day = 1
 	posts = requestedFeed.fetch(curr_date, curr_date - timedelta(days=day))
 	while(len(posts) < 10):
 		day = day*2
-		posts = requestedFeed.fetch(curr_date, curr_date - timedelta(days=day))
+		try:
+			posts = requestedFeed.fetch(curr_date, curr_date - timedelta(days=day))
+		except:
+			return json.dumps([])
+	
 
-	posts = sorted(posts, key=lambda x: x['date'], reverse = True)
+	print(json.dumps(posts))
+	posts = sorted(posts, key=lambda x: x["date"], reverse = True)
+
+	print("TESTING\n\n\n\n")
+	print(json.dumps(posts))
+
+
+
 	curr_date=curr_date-timedelta(days = day+1)
 	date = []
 	json_date = {}
@@ -74,6 +85,7 @@ def fetch():
 	date.append(json_date)
 
 	posts.append(date)
+
 	infodb.close()
 
 	return json.dumps(posts)	
