@@ -7,11 +7,11 @@ This project was motivated by two main factors. The first factor is the increasi
 
 ## Features/How-to-use
 
-To start using the app, the "Add new Feed" button allows you to create a feed, which is designed to hold streams. Selecting this feed, then allows you to use the "Add new Stream" button. Currently there are two supported websites:
-	- Artstation: For this stream, simply provide an artstation profile link and this app will scrape the relevant 
-	content. e.g. https://www.artstation.com/kuvshinov_ilya
-	- rss_podcast: This is largely a placeholder stream for personal use and is designed to deal with rss links for audio 
-	content	e.g. http://www.hellointernet.fm/podcast?format=rss
+To start using the app, the "Add new Feed" button allows you to create a feed, which is designed to hold streams. Selecting this feed, then allows you to use the "Add new Stream" button. Currently there are two supported websites:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Artstation: For this stream, simply provide an artstation profile link and this app will scrape the relevant content.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.g.https://www.artstation.com/kuvshinov_ilya<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- rss_podcast: This is largely a placeholder stream for personal use and is designed to deal with rss links for audio 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;content. e.g. http://www.hellointernet.fm/podcast?format=rss<br/>
 Multiple streams of each type can be added. The app will automatically load the content from these streams (note the first time loading this content for a website will take quite a while due to both processing and to avoid getting blocked from scraping). This content will be loaded into the centre. Scrolling to the bottom will automatically generate more content.
 
 Multiple feeds can be added, each holding their own set of streams. This allows users to create feeds based on both content and website type. Furthermore, this website has persistence so once feeds are created, users will not have to add them again manually. 
@@ -20,7 +20,7 @@ Note: There is no validation for links provided for the stream and providing an 
 
 ## Limitations
 
-This app has several limitations. Its biggest issue is how long it takes to load content and how little content it supports. This is largely the result of underestimating the difficulty of doing this project (as this was my first project that used javascript, ajax, databases and scraping in general). It was also my first time deploying a website. The main issues were that scraping the majority of websites were largely infeasible due to difficulty in parsing content as well as the potential for getting blocked. For example, with the artstation stream it only provides the first image associated with a post and a link to the rest. This is because getting the rest of the information would require scraping the posts individually, making generating content incredibly slow and would likely lead to getting blocked.
+This app has several limitations. Its biggest issue is how long it takes to load content and how little content it supports. This is largely the result of underestimating the difficulty of doing this project (as this was my first project that used javascript, ajax, databases and scraping in general, all of which I had no previous experience with). It was also my first time deploying a website. The main issues were that scraping the majority of websites were largely infeasible due to difficulty in parsing content as well as the potential for getting blocked. For example, with the artstation stream it only provides the first image associated with a post and a link to the rest. This is because getting the rest of the information would require scraping the posts individually, making generating content incredibly slow and lead to getting blocked.
 
 ## Future Development
 
